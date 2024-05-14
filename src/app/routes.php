@@ -1,7 +1,6 @@
 <?php
 
 $app->get('/home', function ($request, $response) {
-    echo "test";
-    $response = $this->view->render($response, 'teste.html');
+    $response = $this->view->render($response, 'index.html');
     return $response;
 });

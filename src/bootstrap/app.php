@@ -18,7 +18,7 @@ $app = new \Slim\App([
 $container = $app->getContainer();
 
 $container['view'] = function ($container) {
-    $view =  new \Slim\Views\PhpRenderer(__DIR__ . '../resources/views');
+    $view =  new \Slim\Views\PhpRenderer('../resources/views');
 
     return $view;
 };
