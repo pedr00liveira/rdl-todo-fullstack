@@ -9,6 +9,8 @@ $config['db']['user']   = 'admin';
 $config['db']['pass']   = '';
 $config['db']['dbname'] = 'todo';
 
+$config['displayErrorDetails'] = true;
+
 $app = new \Slim\App([
     'settings' => $config
 ]);
