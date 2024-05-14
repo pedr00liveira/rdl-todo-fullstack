@@ -24,4 +24,10 @@ return function (App $app) {
         $group->get('', ListUsersAction::class);
         $group->get('/{id}', ViewUserAction::class);
     });
+
+    $app->post('/hello', function (Request $request, Response $response, array $args) {
+        
+        $response->getBody()->write('Hello World');
+        return $response;
+    });
 };
