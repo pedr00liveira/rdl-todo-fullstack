@@ -17,8 +17,8 @@ $app = new \Slim\App([
 
 $container = $app->getContainer();
 
-$container['view'] = function ($container) {
-    $view =  new \Slim\Views\PhpRenderer('../resources/views');
+$container['view'] = function () {
+    $view = new \Slim\Views\PhpRenderer('../resources/views');
     return $view;
 };
 
@@ -33,6 +33,10 @@ $container['db'] = function ($c) {
 
 $container['HomeController'] = function ($container) {
     return new \App\Controllers\HomeController($container);
+};
+
+$container['AuthController'] = function ($container) {
+    return new \App\Controllers\Auth\AuthController($container);
 };
 
 require __DIR__ . '/../app/routes.php';

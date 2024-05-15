@@ -17,10 +17,10 @@
   <meta name="keywords" content="bootstrap, bootstrap4" />
 
 		<!-- Bootstrap CSS -->
-		<link href="../resources/views/css/bootstrap.min.css" rel="stylesheet">
+		<link href="../../../resources/views/css/bootstrap.min.css" rel="stylesheet">
 		<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
-		<link href="../resources/views/css/tiny-slider.css" rel="stylesheet">
-		<link href="../resources/views/css/style.css" rel="stylesheet">
+		<link href="../../../resources/views/css/tiny-slider.css" rel="stylesheet">
+		<link href="../../../resources/views/css/style.css" rel="stylesheet">
 		<title>Furni Free Bootstrap 5 Template for Furniture and Interior Design Websites by Untree.co </title>
 	</head>
 
@@ -31,31 +31,31 @@
 				<div class="container">
 					<div class="row w-50 justify-content-center">
 						
-						<form>
+						<form method="post" action="../auth/signup">
 							<h1>Login</h1>
 							<div class="row">
 							  <div class="col-6">
 								<div class="form-group mb-3">
 								  <label class="text-white" for="fname">First name</label>
-								  <input type="text" class="form-control" id="fname">
+								  <input type="text" class="form-control" id="fname" name="fname">
 								</div>
 							  </div>
 							  <div class="col-6">
 								<div class="form-group mb-3">
 								  <label class="text-white" for="lname">Last name</label>
-								  <input type="text" class="form-control" id="lname">
+								  <input type="text" class="form-control" id="lname" name="lname">
 								</div>
 							  </div>
 							</div>
 							<div class="form-group mb-3">
 							  <label class="text-white" for="email">Email address</label>
-							  <input type="email" class="form-control" id="email">
+							  <input type="email" class="form-control" id="email" name="email">
 							</div>
 			
 							<div class="form-group mb-5">
 							  <label class="text-white" for="message">Password</label>
 								<div class=" d-flex">
-									<input type="password" id="password" class="form-control me-3" id="email">
+									<input type="password" id="password" class="form-control me-3" name="password">
 									<button type="button" id="see_password" class="btn btn-primary-hover-outline">See</button>
 									<input type="hidden" id="value_password" value="1">
 								</div>
@@ -75,7 +75,7 @@
 			<div class="container relative">
 
 				<div class="sofa-img">
-					<img src="../resources/views/images/sofa.png" alt="Image" class="img-fluid">
+					<img src="../../../resources/views/images/sofa.png" alt="Image" class="img-fluid">
 				</div>
 
 				<div class="row g-5 mb-5">
@@ -153,9 +153,9 @@
 		<!-- End Footer Section -->	
 
 
-		<script src="../resources/views/js/bootstrap.bundle.min.js"></script>
-		<script src="../resources/views/js/tiny-slider.js"></script>
-		<script src="../resources/views/js/custom.js"></script>
+		<script src="../../../resources/views/js/bootstrap.bundle.min.js"></script>
+		<script src="../../../resources/views/js/tiny-slider.js"></script>
+		<script src="../../../resources/views/js/custom.js"></script>
 
 		<script>
 			document.getElementById("see_password").addEventListener('click', function () {
