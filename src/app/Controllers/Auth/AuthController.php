@@ -16,7 +16,7 @@ class AuthController extends Controller {
         
         $count = 0;
 
-        $name = $request->getParam('fname') . $request->getParam('lname');
+        $name = $request->getParam('name');
         $email = $request->getParam('email');
         $pass = $request->getParam('password');
 
@@ -41,11 +41,37 @@ class AuthController extends Controller {
             $result = $this->container->db->prepare($sql);
 
             if ($result->execute()) {
-                
-                return $response->withRedirect($this->router->pathFor(home));
+                return $response->withRedirect('signin');
             }
         }
         echo 'error';
         return false;
+    }
+
+    public function getSignIn($request, $response) {
+        return $this->container->view->render($response, 'auth/signin.html');
+    }
+
+    public function postSignIn($request, $response) {
+        
+        $email = $request->getParam('email');
+        $pass = $request->getParam('password');
+
+        $sql = "SELECT id_user 
+                FROM user
+                WHERE email = '$email' 
+                AND pass = '$pass'";
+
+        $result = $this->container->db->prepare($sql);
+
+        if ($result->execute()) {
+
+            if ($result->rowCount() > 0) {
+                $_SESSION['user'] = $result->fetchColumn();
+                return $response->withRedirect('../home');
+            }
+        }
+
+        return "error";
     }
 }

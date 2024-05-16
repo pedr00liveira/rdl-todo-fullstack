@@ -1,9 +1,18 @@
 <?php
 
-$app->get('/home', 'HomeController:index')->setName('home');
+
+$app->get('/home', 'HomeController:index');
+$app->get('/home/calendar', 'HomeController:calendar');
+$app->get('/home/new', 'HomeController:create');
+$app->get('/home/info', 'HomeController:info');
+$app->get('/home/edit', 'HomeController:edit');
+
 
 $app->get('/auth/signup', 'AuthController:getSignUp')->setName('auth.signup');
 $app->post('/auth/signup', 'AuthController:postSignUp');
+
+$app->get('/auth/signin', 'AuthController:getSignIn')->setName('auth.signin');
+$app->post('/auth/signin', 'AuthController:postSignIn');
 
 // $app->get('/home', function ($request, $response) {
 //     //$response = ;
