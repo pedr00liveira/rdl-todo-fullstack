@@ -18,10 +18,10 @@
       <!-- Sidebar scroll-->
       <div>
         <div class="brand-logo d-flex align-items-center justify-content-between ms-3 mt-4">
-          <a class="btn btn-primary w-100 p-3" href="./task">
+          <button class="btn btn-primary w-100 p-3">
             <i class="ti ti-plus"></i>
             &nbsp; <b>New task</b>
-          </a>
+          </button>
         </div>
         <!-- Sidebar navigation-->
         <nav class="sidebar-nav scroll-sidebar" data-simplebar="">
@@ -64,6 +64,8 @@
                   $text = 'secondary';
                   $count = 0;
                 }
+                
+                $count = $count + 1;
 
                 echo '
                 <li class="list-group-item border-0 p-0">
@@ -74,13 +76,10 @@
 
               }
 
-              $count = $count + 1;
             ?>
 
-            
-
             <li class="border-bottom my-3"></li>
-
+            
             <?php
 
               $actual = 0;
@@ -102,12 +101,13 @@
                     <i class="ti ti-dots nav-small-cap-icon fs-4"></i>
                     <span class="hide-menu">'. $row['name_category'] .'</span>
                   </li>';
+                  $actual = $row['category'];
                 }
                 
                 
                 echo
                 '<li class="sidebar-item">
-                  <a class="sidebar-link" href="./info/'. $row['id'] .'" aria-expanded="false">
+                  <a class="sidebar-link" href="./../info/'. $row['id'] .'" aria-expanded="false">
                     <span>
                       <i class="'. $row['icon'] .'"></i>
                     </span>
@@ -145,51 +145,12 @@
     </aside>
     <div class="body-wrapper">
       <div class="card m-5">
-        <form class="w-100 p-4" method="post" action="../home/new">
+        <form class="w-100 p-4" method="post" action="./category">
             <div class="mb-4">
               <label for="exampleInputEmail1" class="form-label">Title</label>
               <input type="text" name="title" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp" required>
             </div>
-            <div class="mb-4">
-              <label for="exampleInputPassword1" class="form-label">Description</label>
-              <textarea rows="6" name="desc" class="form-control" id="exampleInputPassword1"></textarea>
-            </div>
-            <div class="d-flex">
-              <div class="mb-4">
-                <label for="dropdownMenuButton" class="form-label">Category</label>
-                <div class="dropdown">
-                  <button class="form-control dropdown-toggle" type="button" id="dropdownMenuButton1" data-bs-toggle="dropdown" aria-expanded="false">
-                    Select category
-                  </button>
-                  <input type="hidden" value="0" id="categoryValue">
-                  <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
-                    <?php
-                      foreach ($response['category'] as $row) {
-                        echo '
-                          <li>
-                            <a role="button" id="item'. $row['id'] .'" class="dropdown-item">
-                              '. $row['name'] .'
-                            </a>
-                          </li>
-                          
-                          <script>
-                            document.getElementById("item'. $row['id'] .'").addEventListener("click", 
-                              function() {
-                                document.getElementById("dropdownMenuButton1").innerHTML = "'. $row['name'] .'";
-                                document.getElementById("categoryValue").value = '. $row['id'] .';
-                              }
-                            );
-                          </script>';
-                      }
-                    ?>
-                  </ul>
-                </div>
-              </div>
-              <div class="mb-4 ms-4">
-                <label for="exampleInputEmail1" class="form-label">Deadline</label>
-                <input type="date" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp" required>
-              </div>
-            </div>
+            
             <button type="submit" class="btn btn-primary">Create</button>
             <a type="button" class="btn btn-danger ms-2" href="./../home">Close</a>
         </form>

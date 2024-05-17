@@ -31,7 +31,7 @@
               <span class="hide-menu">CATEGORY 1</span>
             </li>
             <li class="sidebar-item">
-              <a class="sidebar-link" href="./info?1" aria-expanded="false">
+              <a class="sidebar-link" href="./index.html" aria-expanded="false">
                 <span>
                   <i class="ti ti-layout-dashboard"></i>
                 </span>
@@ -124,42 +124,38 @@
             </li>
           </ul>
         </nav>
+        <!-- End Sidebar navigation -->
       </div>
+      <!-- End Sidebar scroll-->
     </aside>
+    <!--  Sidebar End -->
+    <!--  Main wrapper -->
     <div class="body-wrapper">
-      <div class="card m-5">
-        <form class="w-100 p-4" action="">
-            <div class="mb-4">
-              <label for="exampleInputEmail1" class="form-label">Title</label>
-              <input type="email" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp">
-            </div>
-            <div class="mb-4">
-              <label for="exampleInputPassword1" class="form-label">Description</label>
-              <textarea rows="6" class="form-control" id="exampleInputPassword1"></textarea>
-            </div>
-            <div class="d-flex">
-              <div class="mb-4">
-                <label for="dropdownMenuButton" class="form-label">Category</label>
-                <div class="dropdown">
-                  <button class="form-control dropdown-toggle" type="button" id="dropdownMenuButton1" data-bs-toggle="dropdown" aria-expanded="false">
-                    Dropdown button
-                  </button>
-                  <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
-                    <li><a class="dropdown-item" href="#">Action</a></li>
-                    <li><a class="dropdown-item" href="#">Another action</a></li>
-                    <li><a class="dropdown-item" href="#">Something else here</a></li>
-                  </ul>
-                </div>
-              </div>
-              <div class="mb-4 ms-4">
-                <label for="exampleInputEmail1" class="form-label">Deadline</label>
-                <input type="date" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp">
-              </div>
-            </div>
-            <button type="submit" class="btn btn-success">Edit</button>
-            <a type="button" class="btn btn-danger ms-2" href="./../home">Close</a>
-        </form>
-      </div>
+      <div class="card m-5 p-5">
+        <h1 class="display-1"><?php echo $response['task']['name'] ?></h1>
+        <h3 class="p-2 ps-0 text-danger"><?php echo $response['task']['deadline'] ?></h3>
+        <p class="w-100 lead mb-5"><?php echo $response['task']['desc'] ?></p>
+
+        <div class="d-flex mt-4">
+          <span class="badge rounded-pill text-bg-light p-3 position-relative">
+            <?php echo $response['task']['name_category'] ?>
+            <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-dark">
+              Category
+            </span>
+          </span>
+          <span class="badge rounded-pill text-bg-light p-3 position-relative ms-5">
+            <?php echo $response['task']['deadline'] ?>
+            <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-dark">
+              Deadline
+            </span>
+          </span>
+        </div>
+        
+        <div class="mt-5">
+          <a type="button" class="btn btn-primary" href="#">Mark as done</a>
+          <a type="button" class="btn btn-success ms-2" href="./edit?1">Edit</a>
+          <a type="button" class="btn btn-danger ms-2" href="./../home">Close</a>
+        </div>
     </div>
   <script src="https://cdn.jsdelivr.net/npm/jquery@3.5.1/dist/jquery.slim.min.js"></script>
   <script src="../../../../../resources/views/assets/libs/jquery/dist/jquery.min.js"></script>

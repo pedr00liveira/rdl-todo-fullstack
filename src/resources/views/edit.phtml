@@ -31,7 +31,7 @@
               <span class="hide-menu">CATEGORY 1</span>
             </li>
             <li class="sidebar-item">
-              <a class="sidebar-link" href="./index.html" aria-expanded="false">
+              <a class="sidebar-link" href="./info?1" aria-expanded="false">
                 <span>
                   <i class="ti ti-layout-dashboard"></i>
                 </span>
@@ -124,41 +124,100 @@
             </li>
           </ul>
         </nav>
-        <!-- End Sidebar navigation -->
       </div>
-      <!-- End Sidebar scroll-->
     </aside>
-    <!--  Sidebar End -->
-    <!--  Main wrapper -->
     <div class="body-wrapper">
-      <div class="card m-5 p-5">
-        <h1 class="display-1">Title of the task</h1>
-        <h3 class="p-2 ps-0 text-danger">X days to go</h3>
-        <p class="w-100 lead mb-5">The task involves updating the user profile page to enhance its functionality 
-          and improve the user experience. The current profile page provides basic 
-          information about the user but lacks certain key features that are important 
-          for users to manage their accounts effectively.</p>
+      <div class="card m-5">
+        <form class="w-100 p-4" method="post" action="../edit/<?php echo $response['task']['id'] ?>">
+            <div class="mb-4">
+              <label for="exampleInputEmail1" class="form-label">Title</label>
+              <input name="title" type="text" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp" value="<?php echo $response['task']['name'] ?>">
+            </div>
+            <div class="mb-4">
+              <label for="exampleInputPassword1" class="form-label">Description</label>
+              <textarea rows="6" name="desc" class="form-control" id="exampleInputPassword1"><?php echo $response['task']['desc'] ?></textarea>
+            </div>
+            <div class="d-flex">
+              <div class="mb-4">
+                <label for="dropdownMenuButton" class="form-label">Category</label>
+                <div class="dropdown">
+                  <button class="form-control dropdown-toggle" type="button" id="dropdownMenuButton1" data-bs-toggle="dropdown" aria-expanded="false">
+                    <?php echo $response['task']['name_category'] ?>
+                  </button>
+                  <input type="hidden" name="category" value="<?php echo $response['task']['category'] ?>" id="categoryValue">
+                  <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
+                    <?php
+                      foreach ($response['category'] as $row) {
+                        echo '
+                          <li>
+                            <a role="button" id="item'. $row['id'] .'" class="dropdown-item">
+                              '. $row['name'] .'
+                            </a>
+                          </li>
+                          
+                          <script>
+                            document.getElementById("item'. $row['id'] .'").addEventListener("click", 
+                              function() {
+                                document.getElementById("dropdownMenuButton1").innerHTML = "'. $row['name'] .'";
+                                document.getElementById("categoryValue").value = '. $row['id'] .';
+                              }
+                            );
+                          </script>';
+                      }
+                    ?>
+                  </ul>
+                </div>
+              </div>
+              <div class="mb-4 ms-4">
+                <label for="exampleInputEmail1" name="deadline" class="form-label">Deadline</label>
+                <input type="date" name="until" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp" value="<?php echo $response['task']['deadline'] ?>" required>
+              </div>
+            </div>
+            <div class="d-flex">
+              <div class="mb-4">
+                <label for="dropdownMenuButton" class="form-label">Icon</label>
+                <input type="hidden" name="icon" value="<?php echo $response['task']['icon'] ?>" id="iconValue">
+                <div class="row w-75">
+                  <?php
+                  
+                    foreach ($response['icon'] as $row) {
+                      echo '
+                      <button id="icon'. $row['id'] .'" type="button" class="form-control col m-2 pt-2 pb-2 ps-3 pe-3">
+                          <i class="'. $row['class'] .'"></i>
+                      </button>
+                      
+                      <script>
+                        document.getElementById("icon'. $row['id'] .'").addEventListener("click", 
+                          function() {
+                            document.getElementById("icon'. $row['id'] .'").classList.add("bg-dark");
+                            document.getElementById("icon'. $row['id'] .'").classList.add("bg-opacity-10");
+                            
+                            actual = document.getElementById("iconValue").value
+                            document.getElementById("iconValue").value = '. $row['id'] .';
 
-        <div class="d-flex mt-4">
-          <span class="badge rounded-pill text-bg-light p-3 position-relative">
-            Category title
-            <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-dark">
-              Category
-            </span>
-          </span>
-          <span class="badge rounded-pill text-bg-light p-3 position-relative ms-5">
-            Month day
-            <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-dark">
-              Deadline
-            </span>
-          </span>
-        </div>
-        
-        <div class="mt-5">
-          <a type="button" class="btn btn-primary" href="#">Mark as done</a>
-          <a type="button" class="btn btn-success ms-2" href="./edit?1">Edit</a>
-          <a type="button" class="btn btn-danger ms-2" href="./../home">Close</a>
-        </div>
+                            document.getElementById("icon" + actual).classList.remove("bg-dark");
+                            document.getElementById("icon" + actual).classList.remove("bg-opacity-10");
+                          }
+                        );
+                      </script>';
+
+                      if ($response['task']['icon'] == $row['id']) {
+                        echo '
+                        <script>
+                          document.getElementById("icon'. $row['id'] .'").classList.add("bg-dark");
+                          document.getElementById("icon'. $row['id'] .'").classList.add("bg-opacity-10");
+                        </script> ';
+                      }
+                    }
+                    
+                  ?>
+                </div>
+              </div>
+            </div>
+            <button type="submit" class="btn btn-success">Edit</button>
+            <a type="button" class="btn btn-danger ms-2" href="./../home">Close</a>
+        </form>
+      </div>
     </div>
   <script src="https://cdn.jsdelivr.net/npm/jquery@3.5.1/dist/jquery.slim.min.js"></script>
   <script src="../../../../../resources/views/assets/libs/jquery/dist/jquery.min.js"></script>

@@ -29,15 +29,15 @@
 
             <li class="nav-small-cap">
               <i class="ti ti-dots nav-small-cap-icon fs-4"></i>
-              <span class="hide-menu">Categories</span>
+              <span role="button" id="hide-show-category" class="user-select-none hide-menu">Categories <i class="ti ti-arrow-down ms-1"></i></span>
             </li>
 
-            <li class="sidebar-item">
+            <li class="category-item sidebar-item">
               <a class="sidebar-link" href="./category" aria-expanded="false">
                 <span class="ps-1">
                   <i class="ti ti-plus"></i>
                 </span>
-                <span class="hide-menu">New category</span>
+                <span class="hide-menu user-select-none">New category</span>
               </a>
             </li>
 
@@ -47,7 +47,7 @@
 
               if (!$response['category']) {
                 echo '
-                <li class="list-group-item border-0 p-0 mt-2">
+                <li class="category-item list-group-item border-0 p-0 mt-2">
                   <span class="d-flex align-items-center gap-6 list-group-item-action text-dark px-3 py-8 mb-1 rounded-1">
                     No categories yet
                   </span>
@@ -58,15 +58,17 @@
 
                 if ($count == 0) {
                   $text = 'primary';
+                  $count = $count + 1;
                 } else if ($count == 1) {
                   $text = 'warning';
+                  $count = $count + 1;
                 } else {
                   $text = 'secondary';
                   $count = 0;
                 }
 
                 echo '
-                <li class="list-group-item border-0 p-0">
+                <li class="category-item list-group-item border-0 p-0">
                   <span class="d-flex align-items-center gap-6 list-group-item-action text-dark px-3 py-8 mb-1 rounded-1">
                     <i class="ti ti-bookmark fs-5 text-'. $text .'"></i>'. $row['name'] .'
                   </span>
@@ -74,13 +76,33 @@
 
               }
 
-              $count = $count + 1;
             ?>
 
-            
+            <script>
+              var hide = true;
+
+              document.getElementById("hide-show-category").addEventListener('click', function() {
+                
+                var elements = document.getElementsByClassName("category-item");
+                var names = '';
+                for(var i = 0; i < elements.length; i++) {
+                  elements[i].classList.toggle("d-none");
+                }
+
+                
+                if (hide) {
+                  this.innerHTML = 'Categories <i class="ti ti-arrow-up ms-1"></i>';
+                  hide = false;
+                  console.log("entrei");
+                } else {
+                  this.innerHTML = 'Categories <i class="ti ti-arrow-down ms-1"></i>';
+                  hide = true;
+                }
+              });
+            </script>
 
             <li class="border-bottom my-3"></li>
-
+            
             <?php
 
               $actual = 0;
@@ -102,12 +124,13 @@
                     <i class="ti ti-dots nav-small-cap-icon fs-4"></i>
                     <span class="hide-menu">'. $row['name_category'] .'</span>
                   </li>';
+                  $actual = $row['category'];
                 }
                 
                 
                 echo
                 '<li class="sidebar-item">
-                  <a class="sidebar-link" href="./info/'. $row['id'] .'" aria-expanded="false">
+                  <a class="sidebar-link" href="./../info/'. $row['id'] .'" aria-expanded="false">
                     <span>
                       <i class="'. $row['icon'] .'"></i>
                     </span>
@@ -120,32 +143,29 @@
 
           </ul>
         
-          <?php
-          
-          echo
-          '<div class="position-sticky pb-1 pt-1 bg-white bottom-0 start-0">
+          <div class="position-sticky pb-1 pt-1 bg-white bottom-0 start-0">
             <div class="p-4 mb-5 mt-3 bg-secondary-subtle rounded ">
               <div class="hstack gap-3">
                 <div class="john-img">
-                  <img src="../../../../../resources/views/assets/images/profile/'. $response['user']['icon'] .'" class="rounded-circle" width="40" height="40" alt="modernize-img">
+                  <a href="../profile">
+                    <img src="../../../../../resources/views/assets/images/profile/<?php echo $response['user']['icon'] ?>" class="rounded-circle" width="40" height="40" alt="modernize-img">
+                  </a>
                 </div>
                 <div class="john-title">
-                  <h6 class="mb-0 fs-4 fw-semibold">'. $response['user']['name'] .'</h6>
+                  <h6 class="mb-0 fs-4 fw-semibold"><?php echo $response['user']['name'] ?></h6>
                 </div>
                 <button class="border-0 bg-transparent text-primary ms-auto" tabindex="0" type="button" aria-label="logout" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="logout">
                   <i class="ti ti-power fs-6"></i>
                 </button>
               </div>
             </div>
-          </div>'
-
-          ?>
+          </div>
         </nav>
       </div>
     </aside>
     <div class="body-wrapper">
       <div class="card m-5">
-        <form class="w-100 p-4" method="post" action="../home/new">
+        <form class="w-100 p-4" method="post" action="../new/task">
             <div class="mb-4">
               <label for="exampleInputEmail1" class="form-label">Title</label>
               <input type="text" name="title" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp" required>
@@ -161,7 +181,7 @@
                   <button class="form-control dropdown-toggle" type="button" id="dropdownMenuButton1" data-bs-toggle="dropdown" aria-expanded="false">
                     Select category
                   </button>
-                  <input type="hidden" value="0" id="categoryValue">
+                  <input type="hidden" name="category" value="0" id="categoryValue">
                   <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
                     <?php
                       foreach ($response['category'] as $row) {
@@ -186,8 +206,40 @@
                 </div>
               </div>
               <div class="mb-4 ms-4">
-                <label for="exampleInputEmail1" class="form-label">Deadline</label>
-                <input type="date" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp" required>
+                <label for="exampleInputEmail1" name="deadline" class="form-label">Deadline</label>
+                <input type="date" name="until" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp" required>
+              </div>
+            </div>
+            <div class="d-flex">
+              <div class="mb-4">
+                <label for="dropdownMenuButton" class="form-label">Icon</label>
+                <input type="hidden" name="icon" value="0" id="iconValue">
+                <div class="row w-75">
+                  <?php
+                  
+                    foreach ($response['icon'] as $row) {
+                      echo '
+                      <button id="icon'. $row['id'] .'" type="button" class="form-control col m-2 pt-2 pb-2 ps-3 pe-3">
+                          <i class="'. $row['class'] .'"></i>
+                      </button>
+                      
+                      <script>
+                        document.getElementById("icon'. $row['id'] .'").addEventListener("click", 
+                          function() {
+                            document.getElementById("icon'. $row['id'] .'").classList.add("bg-dark");
+                            document.getElementById("icon'. $row['id'] .'").classList.add("bg-opacity-10");
+                            
+                            actual = document.getElementById("iconValue").value
+                            document.getElementById("iconValue").value = '. $row['id'] .';
+
+                            document.getElementById("icon" + actual).classList.remove("bg-dark");
+                            document.getElementById("icon" + actual).classList.remove("bg-opacity-10");
+                          }
+                        );
+                      </script>';
+                    }
+                  ?>
+                </div>
               </div>
             </div>
             <button type="submit" class="btn btn-primary">Create</button>
