@@ -1,0 +1,205 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Modernize Free</title>
+  <link rel="shortcut icon" type="image/png" href="../../../../../resources/views/assets/images/logos/favicon.png" />
+  <link rel="stylesheet" href="../../../../../resources/views/assets/css/styles.min.css" />
+</head>
+
+<body>
+  <!--  Body Wrapper -->
+  <div class="page-wrapper" id="main-wrapper" data-layout="vertical" data-navbarbg="skin6" data-sidebartype="full"
+    data-sidebar-position="fixed" data-header-position="fixed">
+    <!-- Sidebar Start -->
+    <aside class="left-sidebar">
+      <!-- Sidebar scroll-->
+      <div>
+        <div class="brand-logo d-flex align-items-center justify-content-between ms-3 mt-4">
+          <a class="btn btn-primary w-100 p-3" href="./new">
+            <i class="ti ti-plus"></i>
+            &nbsp; <b>New task</b>
+          </a>
+        </div>
+        <!-- Sidebar navigation-->
+        <nav class="sidebar-nav scroll-sidebar" data-simplebar="">
+          <ul id="sidebarnav">
+
+            <li class="nav-small-cap">
+              <i class="ti ti-dots nav-small-cap-icon fs-4"></i>
+              <span class="hide-menu">Categories</span>
+            </li>
+
+            <li class="sidebar-item">
+              <a class="sidebar-link" href="#" aria-expanded="false">
+                <span class="ps-1">
+                  <i class="ti ti-plus"></i>
+                </span>
+                <span class="hide-menu">New category</span>
+              </a>
+            </li>
+
+            <?php
+
+              $count = 0;
+
+              if (!$response['category']) {
+                echo '
+                <li class="list-group-item border-0 p-0 mt-2">
+                  <span class="d-flex align-items-center gap-6 list-group-item-action text-dark px-3 py-8 mb-1 rounded-1">
+                    No categories yet
+                  </span>
+                </li>';
+              }
+
+              foreach ($response['category'] as $row) {
+
+                if ($count == 0) {
+                  $text = 'primary';
+                } else if ($count == 1) {
+                  $text = 'warning';
+                } else {
+                  $text = 'secondary';
+                  $count = 0;
+                }
+
+                echo '
+                <li class="list-group-item border-0 p-0">
+                  <span class="d-flex align-items-center gap-6 list-group-item-action text-dark px-3 py-8 mb-1 rounded-1">
+                    <i class="ti ti-bookmark fs-5 text-'. $text .'"></i>'. $row['name'] .'
+                  </span>
+                </li>';
+
+              }
+
+              $count = $count + 1;
+            ?>
+
+            
+
+            <li class="border-bottom my-3"></li>
+
+            <?php
+
+              $actual = 0;
+
+              if (!$response['task']) {
+                echo '
+                <li class="list-group-item border-0 p-0 mt-2">
+                  <span class="d-flex align-items-center gap-6 list-group-item-action text-dark px-3 py-8 mb-1 rounded-1">
+                    No tasks yet
+                  </span>
+                </li>';
+              }
+
+              foreach ($response['task'] as $row) {
+
+                if ($row['category'] != $actual) {
+                  echo
+                  '<li class="nav-small-cap">
+                    <i class="ti ti-dots nav-small-cap-icon fs-4"></i>
+                    <span class="hide-menu">'. $row['name_category'] .'</span>
+                  </li>';
+                }
+                
+                
+                echo
+                '<li class="sidebar-item">
+                  <a class="sidebar-link" href="./info/'. $row['id'] .'" aria-expanded="false">
+                    <span>
+                      <i class="'. $row['icon'] .'"></i>
+                    </span>
+                    <span class="hide-menu">'. $row['name'] .'</span>
+                  </a>
+                </li>';
+              }
+
+            ?>
+
+          </ul>
+        
+          <?php
+          
+          echo
+          '<div class="position-sticky pb-1 pt-1 bg-white bottom-0 start-0">
+            <div class="p-4 mb-5 mt-3 bg-secondary-subtle rounded ">
+              <div class="hstack gap-3">
+                <div class="john-img">
+                  <img src="../../../../../resources/views/assets/images/profile/'. $response['user']['icon'] .'" class="rounded-circle" width="40" height="40" alt="modernize-img">
+                </div>
+                <div class="john-title">
+                  <h6 class="mb-0 fs-4 fw-semibold">'. $response['user']['name'] .'</h6>
+                </div>
+                <button class="border-0 bg-transparent text-primary ms-auto" tabindex="0" type="button" aria-label="logout" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="logout">
+                  <i class="ti ti-power fs-6"></i>
+                </button>
+              </div>
+            </div>
+          </div>'
+
+          ?>
+        </nav>
+        <!-- End Sidebar navigation -->
+      </div>
+      <!-- End Sidebar scroll-->
+    </aside>
+    <!--  Sidebar End -->
+    <!--  Main wrapper -->
+    <div class="body-wrapper">
+      <div class="card m-5 p-5 h-100">
+        <div class="d-flex justify-content-between mb-5">
+          <button type="button" class="btn btn-outline-primary">
+            Previous day
+          </button>
+          <h2><b>May 16th</b></h2>
+          <button type="button" class="btn btn-outline-primary">
+            Next day
+          </button>
+        </div>
+
+
+        <div>
+          <div class="alert alert-secondary" role="alert">
+            <div class="d-flex justify-content-between align-items-center">
+              Simple task
+              <button class="btn btn-light">
+                Details
+              </button>
+            </div>
+          </div>
+
+          <div class="alert alert-secondary" role="alert">
+            <div class="d-flex justify-content-between align-items-center">
+              Simple task
+              <button class="btn btn-light">
+                Details
+              </button>
+            </div>
+          </div>
+
+          <div class="alert alert-secondary" role="alert">
+            <div class="d-flex justify-content-between align-items-center">
+              Simple task
+              <button class="btn btn-light">
+                Details
+              </button>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </div>
+  <script src="https://cdn.jsdelivr.net/npm/jquery@3.5.1/dist/jquery.slim.min.js"></script>
+  <script src="../../../../../resources/views/assets/libs/jquery/dist/jquery.min.js"></script>
+  <script src="../../../../../resources/views/assets/libs/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="../../../../../resources/views/assets/js/sidebarmenu.js"></script>
+  <script src="../../../../../resources/views/assets/js/app.min.js"></script>
+  <script src="../../../../../resources/views/assets/libs/apexcharts/dist/apexcharts.min.js"></script>
+  <script src="../../../../../resources/views/assets/libs/simplebar/dist/simplebar.js"></script>
+  <script src="../../../../../resources/views/assets/js/dashboard.js"></script>
+
+</body>
+
+</html>

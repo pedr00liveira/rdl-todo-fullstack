@@ -8,17 +8,18 @@ use Slim\Views\PhpRenderer as View;
 
 class AuthController extends Controller {
 
-    public function getSignUp($request, $response) {
+    public function renderSignUp($request, $response) {
         return $this->container->view->render($response, 'auth/signup.html');
     }
 
-    public function postSignUp($request, $response) {
+    public function signUp($request, $response) {
         
         $count = 0;
 
         $name = $request->getParam('name');
         $email = $request->getParam('email');
         $pass = $request->getParam('password');
+        $icon = $request->getParam('user_icon');
 
         $sql = "SELECT * 
                 FROM user
@@ -35,8 +36,8 @@ class AuthController extends Controller {
 
         if ($count == 0) {
 
-            $sql = "INSERT INTO user (nome, email, pass)
-                    VALUES ('$name', '$email', '$pass')";
+            $sql = "INSERT INTO user (name, email, pass, icon)
+                    VALUES ('$name', '$email', '$pass', '$icon')";
 
             $result = $this->container->db->prepare($sql);
 
@@ -48,11 +49,11 @@ class AuthController extends Controller {
         return false;
     }
 
-    public function getSignIn($request, $response) {
+    public function renderSignIn($request, $response) {
         return $this->container->view->render($response, 'auth/signin.html');
     }
 
-    public function postSignIn($request, $response) {
+    public function signIn($request, $response) {
         
         $email = $request->getParam('email');
         $pass = $request->getParam('password');
