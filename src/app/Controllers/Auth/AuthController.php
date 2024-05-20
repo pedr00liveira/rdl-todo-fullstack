@@ -3,8 +3,7 @@
 namespace App\Controllers\Auth;
 
 use App\Controllers\Controller;
-
-use Slim\Views\PhpRenderer as View;
+use App\Executers\Auth\AuthExecuter;
 
 class AuthController extends Controller {
 
@@ -13,38 +12,11 @@ class AuthController extends Controller {
     }
 
     public function signUp($request, $response) {
+    
+        if (( new AuthExecuter($this->container) )->signUp($request)) {
+            return $response->withRedirect('signin');
+        }
         
-        $count = 0;
-
-        $name = $request->getParam('name');
-        $email = $request->getParam('email');
-        $pass = $request->getParam('password');
-        $icon = $request->getParam('user_icon');
-
-        $sql = "SELECT * 
-                FROM user
-                WHERE email = '$email'";
-
-        $result = $this->container->db->prepare($sql);
-
-        if ($result->execute()) {
-
-            while ($row = $result->fetch($this->container->db::FETCH_ASSOC)) {
-                $count = $count + 1;
-            }
-        }
-
-        if ($count == 0) {
-
-            $sql = "INSERT INTO user (name, email, pass, icon)
-                    VALUES ('$name', '$email', '$pass', '$icon')";
-
-            $result = $this->container->db->prepare($sql);
-
-            if ($result->execute()) {
-                return $response->withRedirect('signin');
-            }
-        }
         echo 'error';
         return false;
     }
@@ -55,24 +27,16 @@ class AuthController extends Controller {
 
     public function signIn($request, $response) {
         
-        $email = $request->getParam('email');
-        $pass = $request->getParam('password');
-
-        $sql = "SELECT id_user 
-                FROM user
-                WHERE email = '$email' 
-                AND pass = '$pass'";
-
-        $result = $this->container->db->prepare($sql);
-
-        if ($result->execute()) {
-
-            if ($result->rowCount() > 0) {
-                $_SESSION['user'] = $result->fetchColumn();
-                return $response->withRedirect('../home');
-            }
+        if (( new AuthExecuter($this->container) )->signIn($request)) {
+            return $response->withRedirect('../home');
         }
 
-        return "error";
+        echo 'error';
+        return false;
+    }
+
+    public function logOut($request, $response) {
+        session_destroy();
+        return $response->withRedirect('../auth/signin');
     }
 }

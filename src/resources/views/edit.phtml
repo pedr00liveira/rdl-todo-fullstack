@@ -18,205 +18,24 @@
       <!-- Sidebar scroll-->
       <div>
         <div class="brand-logo d-flex align-items-center justify-content-between ms-3 mt-4">
-          <button class="btn btn-primary w-100 p-3">
+          <a href="../new/task" class="btn btn-primary w-100 p-3">
             <i class="ti ti-plus"></i>
             &nbsp; <b>New task</b>
-          </button>
+          </a>
         </div>
         <!-- Sidebar navigation-->
         <nav class="sidebar-nav scroll-sidebar" data-simplebar="">
-          <ul id="sidebarnav">
-            <li class="nav-small-cap">
-              <i class="ti ti-dots nav-small-cap-icon fs-4"></i>
-              <span class="hide-menu">CATEGORY 1</span>
-            </li>
-            <li class="sidebar-item">
-              <a class="sidebar-link" href="./info?1" aria-expanded="false">
-                <span>
-                  <i class="ti ti-layout-dashboard"></i>
-                </span>
-                <span class="hide-menu">Dashboard</span>
-              </a>
-            </li>
-            <li class="nav-small-cap">
-              <i class="ti ti-dots nav-small-cap-icon fs-4"></i>
-              <span class="hide-menu">CATEGORY 2</span>
-            </li>
-            <li class="sidebar-item">
-              <a class="sidebar-link" href="./ui-buttons.html" aria-expanded="false">
-                <span>
-                  <i class="ti ti-article"></i>
-                </span>
-                <span class="hide-menu">Buttons</span>
-              </a>
-            </li>
-            <li class="sidebar-item">
-              <a class="sidebar-link" href="./ui-alerts.html" aria-expanded="false">
-                <span>
-                  <i class="ti ti-alert-circle"></i>
-                </span>
-                <span class="hide-menu">Alerts</span>
-              </a>
-            </li>
-            <li class="sidebar-item">
-              <a class="sidebar-link" href="./ui-card.html" aria-expanded="false">
-                <span>
-                  <i class="ti ti-cards"></i>
-                </span>
-                <span class="hide-menu">Card</span>
-              </a>
-            </li>
-            <li class="sidebar-item">
-              <a class="sidebar-link" href="./ui-forms.html" aria-expanded="false">
-                <span>
-                  <i class="ti ti-file-description"></i>
-                </span>
-                <span class="hide-menu">Forms</span>
-              </a>
-            </li>
-            <li class="sidebar-item">
-              <a class="sidebar-link" href="./ui-typography.html" aria-expanded="false">
-                <span>
-                  <i class="ti ti-typography"></i>
-                </span>
-                <span class="hide-menu">Typography</span>
-              </a>
-            </li>
-            <li class="nav-small-cap">
-              <i class="ti ti-dots nav-small-cap-icon fs-4"></i>
-              <span class="hide-menu">AUTH</span>
-            </li>
-            <li class="sidebar-item">
-              <a class="sidebar-link" href="./authentication-login.html" aria-expanded="false">
-                <span>
-                  <i class="ti ti-login"></i>
-                </span>
-                <span class="hide-menu">Login</span>
-              </a>
-            </li>
-            <li class="sidebar-item">
-              <a class="sidebar-link" href="./authentication-register.html" aria-expanded="false">
-                <span>
-                  <i class="ti ti-user-plus"></i>
-                </span>
-                <span class="hide-menu">Register</span>
-              </a>
-            </li>
-            <li class="nav-small-cap">
-              <i class="ti ti-dots nav-small-cap-icon fs-4"></i>
-              <span class="hide-menu">EXTRA</span>
-            </li>
-            <li class="sidebar-item">
-              <a class="sidebar-link" href="./icon-tabler.html" aria-expanded="false">
-                <span>
-                  <i class="ti ti-mood-happy"></i>
-                </span>
-                <span class="hide-menu">Icons</span>
-              </a>
-            </li>
-            <li class="sidebar-item">
-              <a class="sidebar-link" href="./sample-page.html" aria-expanded="false">
-                <span>
-                  <i class="ti ti-aperture"></i>
-                </span>
-                <span class="hide-menu">Sample Page</span>
-              </a>
-            </li>
-          </ul>
+          <?php
+            echo $response['sidebar'];
+          ?>
         </nav>
       </div>
     </aside>
     <div class="body-wrapper">
       <div class="card m-5">
-        <form class="w-100 p-4" method="post" action="../edit/<?php echo $response['task']['id'] ?>">
-            <div class="mb-4">
-              <label for="exampleInputEmail1" class="form-label">Title</label>
-              <input name="title" type="text" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp" value="<?php echo $response['task']['name'] ?>">
-            </div>
-            <div class="mb-4">
-              <label for="exampleInputPassword1" class="form-label">Description</label>
-              <textarea rows="6" name="desc" class="form-control" id="exampleInputPassword1"><?php echo $response['task']['desc'] ?></textarea>
-            </div>
-            <div class="d-flex">
-              <div class="mb-4">
-                <label for="dropdownMenuButton" class="form-label">Category</label>
-                <div class="dropdown">
-                  <button class="form-control dropdown-toggle" type="button" id="dropdownMenuButton1" data-bs-toggle="dropdown" aria-expanded="false">
-                    <?php echo $response['task']['name_category'] ?>
-                  </button>
-                  <input type="hidden" name="category" value="<?php echo $response['task']['category'] ?>" id="categoryValue">
-                  <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
-                    <?php
-                      foreach ($response['category'] as $row) {
-                        echo '
-                          <li>
-                            <a role="button" id="item'. $row['id'] .'" class="dropdown-item">
-                              '. $row['name'] .'
-                            </a>
-                          </li>
-                          
-                          <script>
-                            document.getElementById("item'. $row['id'] .'").addEventListener("click", 
-                              function() {
-                                document.getElementById("dropdownMenuButton1").innerHTML = "'. $row['name'] .'";
-                                document.getElementById("categoryValue").value = '. $row['id'] .';
-                              }
-                            );
-                          </script>';
-                      }
-                    ?>
-                  </ul>
-                </div>
-              </div>
-              <div class="mb-4 ms-4">
-                <label for="exampleInputEmail1" name="deadline" class="form-label">Deadline</label>
-                <input type="date" name="until" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp" value="<?php echo $response['task']['deadline'] ?>" required>
-              </div>
-            </div>
-            <div class="d-flex">
-              <div class="mb-4">
-                <label for="dropdownMenuButton" class="form-label">Icon</label>
-                <input type="hidden" name="icon" value="<?php echo $response['task']['icon'] ?>" id="iconValue">
-                <div class="row w-75">
-                  <?php
-                  
-                    foreach ($response['icon'] as $row) {
-                      echo '
-                      <button id="icon'. $row['id'] .'" type="button" class="form-control col m-2 pt-2 pb-2 ps-3 pe-3">
-                          <i class="'. $row['class'] .'"></i>
-                      </button>
-                      
-                      <script>
-                        document.getElementById("icon'. $row['id'] .'").addEventListener("click", 
-                          function() {
-                            document.getElementById("icon'. $row['id'] .'").classList.add("bg-dark");
-                            document.getElementById("icon'. $row['id'] .'").classList.add("bg-opacity-10");
-                            
-                            actual = document.getElementById("iconValue").value
-                            document.getElementById("iconValue").value = '. $row['id'] .';
-
-                            document.getElementById("icon" + actual).classList.remove("bg-dark");
-                            document.getElementById("icon" + actual).classList.remove("bg-opacity-10");
-                          }
-                        );
-                      </script>';
-
-                      if ($response['task']['icon'] == $row['id']) {
-                        echo '
-                        <script>
-                          document.getElementById("icon'. $row['id'] .'").classList.add("bg-dark");
-                          document.getElementById("icon'. $row['id'] .'").classList.add("bg-opacity-10");
-                        </script> ';
-                      }
-                    }
-                    
-                  ?>
-                </div>
-              </div>
-            </div>
-            <button type="submit" class="btn btn-success">Edit</button>
-            <a type="button" class="btn btn-danger ms-2" href="./../home">Close</a>
-        </form>
+        <?php
+          echo $response['main'];
+        ?>
       </div>
     </div>
   <script src="https://cdn.jsdelivr.net/npm/jquery@3.5.1/dist/jquery.slim.min.js"></script>

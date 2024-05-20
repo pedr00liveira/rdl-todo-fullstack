@@ -25,120 +25,8 @@
         </div>
         <!-- Sidebar navigation-->
         <nav class="sidebar-nav scroll-sidebar" data-simplebar="">
-          <ul id="sidebarnav">
-
-            <li class="nav-small-cap">
-              <i class="ti ti-dots nav-small-cap-icon fs-4"></i>
-              <span class="hide-menu">Categories</span>
-            </li>
-
-            <li class="sidebar-item">
-              <a class="sidebar-link" href="./new/category" aria-expanded="false">
-                <span class="ps-1">
-                  <i class="ti ti-plus"></i>
-                </span>
-                <span class="hide-menu">New category</span>
-              </a>
-            </li>
-
-            <?php
-
-              $count = 0;
-
-              if (!$response['category']) {
-                echo '
-                <li class="list-group-item border-0 p-0 mt-2">
-                  <span class="d-flex align-items-center gap-6 list-group-item-action text-dark px-3 py-8 mb-1 rounded-1">
-                    No categories yet
-                  </span>
-                </li>';
-              }
-
-              foreach ($response['category'] as $row) {
-
-                if ($count == 0) {
-                  $text = 'primary';
-                } else if ($count == 1) {
-                  $text = 'warning';
-                } else {
-                  $text = 'secondary';
-                  $count = 0;
-                }
-
-                $count = $count + 1;
-
-                echo '
-                <li class="list-group-item border-0 p-0">
-                  <span class="d-flex align-items-center gap-6 list-group-item-action text-dark px-3 py-8 mb-1 rounded-1">
-                    <i class="ti ti-bookmark fs-5 text-'. $text .'"></i>'. $row['name'] .'
-                  </span>
-                </li>';
-
-              }
-
-            ?>
-
-            <li class="border-bottom my-3"></li>
-            
-            <?php
-
-              $actual = 0;
-
-              if (!$response['task']) {
-                echo '
-                <li class="list-group-item border-0 p-0 mt-2">
-                  <span class="d-flex align-items-center gap-6 list-group-item-action text-dark px-3 py-8 mb-1 rounded-1">
-                    No tasks yet
-                  </span>
-                </li>';
-              }
-
-              foreach ($response['task'] as $row) {
-
-                if ($row['category'] != $actual) {
-                  echo
-                  '<li class="nav-small-cap">
-                    <i class="ti ti-dots nav-small-cap-icon fs-4"></i>
-                    <span class="hide-menu">'. $row['name_category'] .'</span>
-                  </li>';
-                  $actual = $row['category'];
-                }
-                
-                
-                echo
-                '<li class="sidebar-item">
-                  <a class="sidebar-link" href="./../info/'. $row['id'] .'" aria-expanded="false">
-                    <span>
-                      <i class="'. $row['icon'] .'"></i>
-                    </span>
-                    <span class="hide-menu">'. $row['name'] .'</span>
-                  </a>
-                </li>';
-              }
-
-            ?>
-
-          </ul>
-        
           <?php
-          
-          echo
-          '<div class="position-sticky pb-1 pt-1 bg-white bottom-0 start-0">
-            <div class="p-4 mb-5 mt-3 bg-secondary-subtle rounded ">
-              <div class="hstack gap-3">
-                <div class="john-img">
-                  <img src="../../../../../resources/views/assets/images/profile/'. $response['user']['icon'] .'" class="rounded-circle" width="40" height="40" alt="modernize-img">
-                </div>
-                <div class="john-title">
-                  <h6 class="mb-0 fs-4 fw-semibold">'. $response['user']['name'] .'</h6>
-                </div>
-                <button class="border-0 bg-transparent text-primary ms-auto" tabindex="0" type="button" aria-label="logout" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="logout">
-                  <i class="ti ti-power fs-6"></i>
-                </button>
-              </div>
-            </div>
-          </div>'
-
+            echo $response['sidebar'];
           ?>
         </nav>
       </div>
@@ -150,46 +38,9 @@
       <div class="card overflow-hidden m-4">
           <div class="card-body p-0">
             <img src="../../../../../resources/views/assets/images/profile/profilebg.jpg" alt="modernize-img" class="img-fluid">
-            <div class="row align-items-center mb-5">
-              <div class="col-lg-4 order-lg-1 order-2">
-                <div class="d-flex align-items-center justify-content-around m-4">
-                  <div class="text-center">
-                    <i class="ti ti-check fs-6 d-block mb-2"></i>
-                    <h4 class="mb-0 lh-1"><?php echo $response['user']['tasks']?></h4>
-                    <p class="mb-0 ">Tasks</p>
-                  </div>
-                  <div class="text-center">
-                    <i class="ti ti-bookmark fs-6 d-block mb-2"></i>
-                    <h4 class="mb-0 lh-1"><?php echo $response['user']['categories']?></h4>
-                    <p class="mb-0 ">Categories</p>
-                  </div>
-                </div>
-              </div>
-              <div class="col-lg-4 mt-n3 order-lg-2 order-1">
-                <div class="mt-n5">
-                  <div class="d-flex align-items-center justify-content-center mb-2">
-                    <div class="d-flex align-items-center justify-content-center round-110">
-                        <img draggable="false" src="../../../../../resources/views/assets/images/profile/<?php echo $response['user']['icon']?>" alt="modernize-img" class="w-50 h-50 rounded-circle overflow-hidden border border-4 border-white">
-                    </div>
-                  </div>
-                  <div class="text-center">
-                    <h5 class="mb-0"><?php echo $response['user']['name']?></h5>
-                  </div>
-                </div>
-              </div>
-              <div class="col-lg-4 order-last">
-                <ul class="list-unstyled d-flex align-items-center justify-content-center justify-content-lg-end my-3 mx-4 pe-xxl-4 gap-3">
-                  <li class="text-center">
-                    <i class="ti ti-mail"></i>
-                    <h4 class="mb-2 lh-1"><?php echo $response['user']['email']?></h4>
-                    <p class="mb-0 ">Email</p>
-                  </li>
-                  <li>
-                    <button class="btn btn-primary text-nowrap ms-5">Edit profile</button>
-                  </li>
-                </ul>
-              </div>
-            </div>
+            <?php
+              echo $response['main']; 
+            ?>
           </div>
       </div>
     </div>

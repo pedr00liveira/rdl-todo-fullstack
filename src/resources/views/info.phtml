@@ -18,111 +18,16 @@
       <!-- Sidebar scroll-->
       <div>
         <div class="brand-logo d-flex align-items-center justify-content-between ms-3 mt-4">
-          <button class="btn btn-primary w-100 p-3">
+          <a href="../new/task" class="btn btn-primary w-100 p-3">
             <i class="ti ti-plus"></i>
             &nbsp; <b>New task</b>
-          </button>
+          </a>
         </div>
         <!-- Sidebar navigation-->
         <nav class="sidebar-nav scroll-sidebar" data-simplebar="">
-          <ul id="sidebarnav">
-            <li class="nav-small-cap">
-              <i class="ti ti-dots nav-small-cap-icon fs-4"></i>
-              <span class="hide-menu">CATEGORY 1</span>
-            </li>
-            <li class="sidebar-item">
-              <a class="sidebar-link" href="./index.html" aria-expanded="false">
-                <span>
-                  <i class="ti ti-layout-dashboard"></i>
-                </span>
-                <span class="hide-menu">Dashboard</span>
-              </a>
-            </li>
-            <li class="nav-small-cap">
-              <i class="ti ti-dots nav-small-cap-icon fs-4"></i>
-              <span class="hide-menu">CATEGORY 2</span>
-            </li>
-            <li class="sidebar-item">
-              <a class="sidebar-link" href="./ui-buttons.html" aria-expanded="false">
-                <span>
-                  <i class="ti ti-article"></i>
-                </span>
-                <span class="hide-menu">Buttons</span>
-              </a>
-            </li>
-            <li class="sidebar-item">
-              <a class="sidebar-link" href="./ui-alerts.html" aria-expanded="false">
-                <span>
-                  <i class="ti ti-alert-circle"></i>
-                </span>
-                <span class="hide-menu">Alerts</span>
-              </a>
-            </li>
-            <li class="sidebar-item">
-              <a class="sidebar-link" href="./ui-card.html" aria-expanded="false">
-                <span>
-                  <i class="ti ti-cards"></i>
-                </span>
-                <span class="hide-menu">Card</span>
-              </a>
-            </li>
-            <li class="sidebar-item">
-              <a class="sidebar-link" href="./ui-forms.html" aria-expanded="false">
-                <span>
-                  <i class="ti ti-file-description"></i>
-                </span>
-                <span class="hide-menu">Forms</span>
-              </a>
-            </li>
-            <li class="sidebar-item">
-              <a class="sidebar-link" href="./ui-typography.html" aria-expanded="false">
-                <span>
-                  <i class="ti ti-typography"></i>
-                </span>
-                <span class="hide-menu">Typography</span>
-              </a>
-            </li>
-            <li class="nav-small-cap">
-              <i class="ti ti-dots nav-small-cap-icon fs-4"></i>
-              <span class="hide-menu">AUTH</span>
-            </li>
-            <li class="sidebar-item">
-              <a class="sidebar-link" href="./authentication-login.html" aria-expanded="false">
-                <span>
-                  <i class="ti ti-login"></i>
-                </span>
-                <span class="hide-menu">Login</span>
-              </a>
-            </li>
-            <li class="sidebar-item">
-              <a class="sidebar-link" href="./authentication-register.html" aria-expanded="false">
-                <span>
-                  <i class="ti ti-user-plus"></i>
-                </span>
-                <span class="hide-menu">Register</span>
-              </a>
-            </li>
-            <li class="nav-small-cap">
-              <i class="ti ti-dots nav-small-cap-icon fs-4"></i>
-              <span class="hide-menu">EXTRA</span>
-            </li>
-            <li class="sidebar-item">
-              <a class="sidebar-link" href="./icon-tabler.html" aria-expanded="false">
-                <span>
-                  <i class="ti ti-mood-happy"></i>
-                </span>
-                <span class="hide-menu">Icons</span>
-              </a>
-            </li>
-            <li class="sidebar-item">
-              <a class="sidebar-link" href="./sample-page.html" aria-expanded="false">
-                <span>
-                  <i class="ti ti-aperture"></i>
-                </span>
-                <span class="hide-menu">Sample Page</span>
-              </a>
-            </li>
-          </ul>
+          <?php
+            echo $response['sidebar'];
+          ?>
         </nav>
         <!-- End Sidebar navigation -->
       </div>
@@ -131,31 +36,9 @@
     <!--  Sidebar End -->
     <!--  Main wrapper -->
     <div class="body-wrapper">
-      <div class="card m-5 p-5">
-        <h1 class="display-1"><?php echo $response['task']['name'] ?></h1>
-        <h3 class="p-2 ps-0 text-danger"><?php echo $response['task']['deadline'] ?></h3>
-        <p class="w-100 lead mb-5"><?php echo $response['task']['desc'] ?></p>
-
-        <div class="d-flex mt-4">
-          <span class="badge rounded-pill text-bg-light p-3 position-relative">
-            <?php echo $response['task']['name_category'] ?>
-            <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-dark">
-              Category
-            </span>
-          </span>
-          <span class="badge rounded-pill text-bg-light p-3 position-relative ms-5">
-            <?php echo $response['task']['deadline'] ?>
-            <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-dark">
-              Deadline
-            </span>
-          </span>
-        </div>
-        
-        <div class="mt-5">
-          <a type="button" class="btn btn-primary" href="#">Mark as done</a>
-          <a type="button" class="btn btn-success ms-2" href="./edit?1">Edit</a>
-          <a type="button" class="btn btn-danger ms-2" href="./../home">Close</a>
-        </div>
+      <?php
+        echo $response['main'];
+      ?>
     </div>
   <script src="https://cdn.jsdelivr.net/npm/jquery@3.5.1/dist/jquery.slim.min.js"></script>
   <script src="../../../../../resources/views/assets/libs/jquery/dist/jquery.min.js"></script>
