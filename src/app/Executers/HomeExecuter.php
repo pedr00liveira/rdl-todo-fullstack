@@ -114,19 +114,37 @@ class HomeExecuter extends Executer {
                     
     }
     
-    public function renderCalendar() {
+    public function renderCalendar($request) {
 
         $json = HomeExecuter::renderSideBar();
 
-        $sql = "SELECT t.id_task as id, t.name as task, tt.id_type_task as id_type, tt.name as type, i.class as icon, t.until
+        $category = 0;
+        $done = 0;
+
+        try {
+            $category = $request->getParam('category');
+            $done = $request->getParam('done');
+        } catch (\Exception $e) {
+            $done = 0;
+        }
+
+        $sql = "SELECT t.id_task as id, t.name as task, tt.id_type_task as id_type, tt.name as type, i.class as icon, t.until, t.done
                     FROM task t
                     INNER JOIN type_task tt
                     ON t.ref_id_type = tt.id_type_task
                     INNER JOIN icon i
                     ON t.ref_id_icon = i.id_icon
-                    WHERE t.ref_id_user = ". $_SESSION['user'] . 
-                    " AND t.done = 0 
-                    ORDER BY until";
+                    WHERE t.ref_id_user = ". $_SESSION['user'];
+
+        if ($category != 0) {
+            $sql = $sql . " AND t.ref_id_type = " . $category;
+        }
+
+        if ($done == 0) {
+            $sql = $sql . " AND t.done = 0 ";
+        }
+        
+        $sql = $sql . " ORDER BY done, until";
 
         $result = $this->container->db->prepare($sql);
 
@@ -143,9 +161,38 @@ class HomeExecuter extends Executer {
                     'id' => $row['id'],
                     'name' => $row['task'],
                     'deadline' => $row['until'],
-                    'icon' => $row['icon']
+                    'icon' => $row['icon'],
+                    'done' => $row['done']
                 ];
             }
+
+            if ($category != 0) {
+
+                $sql = "SELECT t.name as name
+                        FROM type_task t
+                        WHERE t.id_type_task = ". $category;
+
+                $result = $this->container->db->prepare($sql);
+
+                if ($result->execute()) {
+
+                    $res = $result->fetchAll();
+
+                    foreach ($res as $row) {
+                        $name_category = $row['name'];
+                    }
+                }
+
+            } else {
+
+                $name_category = "";
+            }
+
+            $json['filter'] = [
+                "id_category" => intval($category),
+                "category" => $name_category,
+                "done" => intval($done)
+            ];
 
             return $json;
         }
@@ -161,8 +208,11 @@ class HomeExecuter extends Executer {
         $deadline = $request->getParam('until');
         $icon = $request->getParam('icon');
 
+        $title = str_replace("'", "''", $title);
+        $desc = str_replace("'", "''", $desc);
+
         $sql = "INSERT INTO task (name, description, ref_id_type, until, ref_id_user, ref_id_icon)
-                VALUES ('$title', '$desc', '$category', '$deadline', ". $_SESSION['user'] .", $icon)";
+                VALUES ('$title', '$desc', $category, '$deadline', ". $_SESSION['user'] .", $icon)";
 
         $result = $this->container->db->prepare($sql);
 
@@ -176,6 +226,8 @@ class HomeExecuter extends Executer {
     public function createCategory($request) {
 
         $title = $request->getParam('title');
+
+        $title = str_replace("'", "\\'", $title);
 
         $sql = "INSERT INTO type_task (name, ref_id_user)
                 VALUES ('$title', '". $_SESSION['user'] ."')";
@@ -213,7 +265,7 @@ class HomeExecuter extends Executer {
                     'id' => $row['id'],
                     'name' => $row['task'],
                     'desc' => $row['description'],
-                    'deadline' => $row['deadline'],
+                    'deadline' => date_format(date_create($row['deadline']), "d/m/Y"),
                     'done' => $row['done']
                 ];
             }
@@ -309,6 +361,9 @@ class HomeExecuter extends Executer {
         $deadline = $request->getParam('until');
         $icon = $request->getParam('icon');
 
+        $title = str_replace("'", "\\'", $title);
+        $desc = str_replace("'", "\\'", $desc);
+
         $sql = "UPDATE task
                 SET name = '$title', ref_id_type = $category, description = '$desc', until = '$deadline', ref_id_icon = '$icon'
                 WHERE id_task = " . $args['id'];
@@ -331,7 +386,6 @@ class HomeExecuter extends Executer {
             return true;
         }
 
-        var_dump("erro");
         return false;
     }
     

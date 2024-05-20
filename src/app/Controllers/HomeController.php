@@ -3,6 +3,7 @@
 namespace App\Controllers;
 
 use App\Executers\HomeExecuter;
+use Exception;
 
 class HomeController extends Controller {
 
@@ -59,7 +60,7 @@ class HomeController extends Controller {
                     <span class="d-flex align-items-center gap-6 list-group-item-action text-dark px-3 py-8 mb-1 rounded-1">
                     <i class="ti ti-bookmark fs-5 text-'. $text .'"></i>'. $row['name'] .'
                     </span>
-                    <a href="'. $home .'delete/category/'. $row['id'] .'"><i class="ti ti-trash nav-small-cap-icon fs-4"></i></a>
+                    <a href="'. $home .'delete/category/'. $row['id'] .'?url='. explode("?", str_replace("/public/home/", "", $_SERVER['REQUEST_URI']))[0] .'"><i class="ti ti-trash nav-small-cap-icon fs-4"></i></a>
                 </div>
             </li>';
 
@@ -157,415 +158,699 @@ class HomeController extends Controller {
 
     public function renderCalendar($request, $response) {
 
-        $payload = ( new HomeExecuter($this->container) )->renderCalendar();
+        try {
+            $payload = ( new HomeExecuter($this->container) )->renderCalendar($request);
 
-        $html['sidebar'] = HomeController::renderSideBar($payload, "./");
-        $html['main'] = '';
+            if ($error = $request->getParam('erro')) {
+                switch ($error) {
+                    case Controller::ERROR_DELTASK:
+                        $toastParams = Controller::ERROR_DELTASK_PARAMS;
+                        break;
+                    case Controller::ERROR_DELCAT:
+                        $toastParams = Controller::ERROR_DELCAT_PARAMS;
+                        break;
+                    case Controller::ERROR_MARKDONE:
+                        $toastParams = Controller::ERROR_MARKDONE_PARAMS;
+                        break;
+                    case Controller::ERROR_LOGOUT:
+                        $toastParams = Controller::ERROR_LOGOUT_PARAMS;
+                        break;
+                    case Controller::SUCCESS_DELTASK:
+                        $toastParams = Controller::SUCCESS_DELTASK_PARAMS;
+                        break;
+                    case Controller::SUCCESS_DELCAT:
+                        $toastParams = Controller::SUCCESS_DELCAT_PARAMS;
+                        break;
+                    case Controller::SUCCESS_MARKDONE:
+                        $toastParams = Controller::SUCCESS_MARKDONE_PARAMS;
+                        break;
+                    case Controller::SUCCESS_INSCAT:
+                        $toastParams = Controller::SUCCESS_INSCAT_PARAMS;
+                        break;
+                    case Controller::SUCCESS_SIGNIN:
+                        $toastParams = Controller::SUCCESS_SIGNIN_PARAMS;
+                        break;
+                    default:
+                        $toastParams = Controller::ERROR_UNDEFINED_PARAMS;
 
-        $month = date("m");
-        $day = date("d");
+                }
 
-        switch ($month) {
-            case 1:
-            $html['main'] = $html['main'] . 'January';
-            break;
-            case 2:
-            $html['main'] = $html['main'] . 'February';
-            break;
-            case 3:
-            $html['main'] = $html['main'] . 'March';
-            break;
-            case 4:
-            $html['main'] = $html['main'] . 'April';
-            break;
-            case 5:
-            $html['main'] = $html['main'] . 'May';
-            break;
-            case 6:
-            $html['main'] = $html['main'] . 'June';
-            break;
-            case 7:
-            $html['main'] = $html['main'] . 'July';
-            break;
-            case 8:
-            $html['main'] = $html['main'] . 'August';
-            break;
-            case 9:
-            $html['main'] = $html['main'] . 'September';
-            break;
-            case 10:
-            $html['main'] = $html['main'] . 'October';
-            break;
-            case 11:
-            $html['main'] = $html['main'] . 'November';
-            break;
-            case 12:
-            $html['main'] = $html['main'] . 'December';
-            break;
-        }
-        
-        $html['main'] = $html['main'] . ' ' . $day;
-        
-        if (substr($day, -1) == '1') {
-            $html['main'] = $html['main'] . 'st';
-        } else if (substr($day, -1) == '2') {
-            $html['main'] = $html['main'] . 'nd';
-        } else if (substr($day, -1) == '3') {
-            $html['main'] = $html['main'] . 'rd';
-        } else {
-            $html['main'] = $html['main'] . 'th';  
-        }
-
-        $html['main'] = $html['main'] . '</b></h2>
-        </div>';
-
-        foreach ($payload['calendar'] as $row) {
-
-            $days = round((strtotime($row['deadline']) - time()) / (60 * 60 * 24));
-
-            if ($days < 7) {
-              $text = 'danger';
+                $html['toast'] = Controller::renderToast($toastParams);
             } else {
-              $text = 'secondary';
-            } 
+                $html['toast'] = '';
+            }
+
+            $html['sidebar'] = HomeController::renderSideBar($payload, "./");
+            $html['main'] = '';
+
+            $month = date("m");
+            $day = date("d");
+
+            switch ($month) {
+                case 1:
+                $html['main'] = $html['main'] . 'January';
+                break;
+                case 2:
+                $html['main'] = $html['main'] . 'February';
+                break;
+                case 3:
+                $html['main'] = $html['main'] . 'March';
+                break;
+                case 4:
+                $html['main'] = $html['main'] . 'April';
+                break;
+                case 5:
+                $html['main'] = $html['main'] . 'May';
+                break;
+                case 6:
+                $html['main'] = $html['main'] . 'June';
+                break;
+                case 7:
+                $html['main'] = $html['main'] . 'July';
+                break;
+                case 8:
+                $html['main'] = $html['main'] . 'August';
+                break;
+                case 9:
+                $html['main'] = $html['main'] . 'September';
+                break;
+                case 10:
+                $html['main'] = $html['main'] . 'October';
+                break;
+                case 11:
+                $html['main'] = $html['main'] . 'November';
+                break;
+                case 12:
+                $html['main'] = $html['main'] . 'December';
+                break;
+            }
+            
+            $html['main'] = $html['main'] . ' ' . $day;
+            
+            if (substr($day, -1) == '1') {
+                $html['main'] = $html['main'] . 'st';
+            } else if (substr($day, -1) == '2') {
+                $html['main'] = $html['main'] . 'nd';
+            } else if (substr($day, -1) == '3') {
+                $html['main'] = $html['main'] . 'rd';
+            } else {
+                $html['main'] = $html['main'] . 'th';  
+            }
+
+            $html['main'] = $html['main'] . '</b></h2>
+            </div>';
 
             $html['main'] = $html['main'] . '
-            <div class="alert alert-'. $text .'" role="alert">
-                <div class="d-flex justify-content-between align-items-center">
-                <div><b>'. $row['name_category'] .'</b> / '. $row['name'] .' </div>
-                <div>
-                    <b class="me-4"> '.  ( $days == 0  ? 'Due today' : ( $days >= 0  ? 'Due in ' . $days+1 . ' days' : "Deadline has passed" ) ) .' </b>
-                    <a class="btn btn-'. ( $text == 'danger' ? $text : 'light') .'" href="./info/' . $row['id'] . '">
-                        Details
-                    </a>
-                    <a class="btn btn-transparent" href="./delete/task/' . $row['id'] . '">
-                        <i class="ti ti-trash"></i>
-                    </a>
+            <form class="d-flex justify-content-start align-items-center mb-4">
+                <div class="form-check ms-2">
+                    <input name="done" class="form-check-input" type="checkbox" value="1" id="flexCheckDefault" ' . ($payload['filter']['done'] == 0 ? "" : "checked") . '>
+                    <label class="form-check-label" for="flexCheckDefault">
+                        Show completed tasks
+                    </label>
                 </div>
-                </div>
-            </div>';
+                <div class="dropdown ms-4">
+                  <button class="form-control dropdown-toggle" type="button" id="dropdownMenuButton1" data-bs-toggle="dropdown" aria-expanded="false">
+                    ' . ($payload['filter']['id_category'] != 0 ? $payload['filter']['category'] : "All categories") . '
+                  </button>
+                  <input type="hidden" name="category" value="' . $payload['filter']['id_category'] . '" id="categoryValue">
+                  <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
             
-          }
+                    <li>
+                        <a role="button" id="item0" class="dropdown-item">
+                            All categories
+                        </a>
+                    </li>
+                
+                <script>
+                document.getElementById("item0").addEventListener("click", 
+                    function() {
+                    document.getElementById("dropdownMenuButton1").innerHTML = "All categories";
+                    document.getElementById("categoryValue").value = 0;
+                    }
+                );
+                </script>';
+
+            foreach ($payload['category'] as $row) {
+                $html['main'] = $html['main'] . '
+                <li>
+                <a role="button" id="item'. $row['id'] .'" class="dropdown-item">
+                    '. $row['name'] .'
+                </a>
+                </li>
+                
+                <script>
+                document.getElementById("item'. $row['id'] .'").addEventListener("click", 
+                    function() {
+                    document.getElementById("dropdownMenuButton1").innerHTML = "'. $row['name'] .'";
+                    document.getElementById("categoryValue").value = '. $row['id'] .';
+                    }
+                );
+                </script>';
+            }
+                
+            $html['main'] = $html['main'] . '
+                    </div>
+                </ul>';
+
+            $html['main'] = $html['main'] . '
+            <button class="btn btn-primary ms-4">
+                Filter
+            </button>
+
+            </form>
+            
+            ';
+
+            $count = 0;
+
+            foreach ($payload['calendar'] as $row) {
+
+                $count = $count + 1;
+
+                $days = round((strtotime($row['deadline']) - time()) / (60 * 60 * 24));
+
+                if ($row['done'] == 0) {
+                    if ($days < 4) {
+                        $text = 'danger';
+                    } else {
+                        $text = 'secondary';
+                    } 
+                } else {
+                    $text = 'transparent';
+                }
+                
+
+                $html['main'] = $html['main'] . '
+                <div class="alert alert-'. $text . ($row['done'] == 0 ? "" : " opacity-75 border-dark border-opacity-25") . ' " role="alert">
+                    <div class="d-flex justify-content-between align-items-center">
+                    <div><b>'. $row['name_category'] .'</b> / '. $row['name'] .' </div>
+                    <div>
+                        <b class="me-4"> ';
+                            if ($row['done'] != 0) {
+                                $html['main'] = $html['main'] . 'Completed';
+                            } else if ($days < 0) {
+                                $html['main'] = $html['main'] . 'Deadline has passed';
+                            } else if ($days == 0) {
+                                $html['main'] = $html['main'] . 'Due today';
+                            } else if ($days >= 0 && $days <= 7) {
+                                $html['main'] = $html['main'] . 'Due in ' . $days . ($days == 1 ? ' day' : ' days');
+                            } else if ($days > 7 && $days <= 31) {
+                                $weeks = round(date_format( date_create($row['deadline']), 'W' ) - date( 'W'));
+                                $html['main'] = $html['main'] . 'Due in '. $weeks . ($weeks == 1 ? ' week' : ' weeks');
+                            } else if ($days > 7 && $days <= 365) {
+                                $months = round(date_format( date_create($row['deadline']), 'm' ) - date( 'm') );
+                                $html['main'] = $html['main'] . 'Due in '. $months . ($months == 1 ? ' month' : ' months');
+                            } else {
+                                $years = round(date_format( date_create($row['deadline']), 'Y' ) - date( 'Y'));
+                                $html['main'] = $html['main'] . 'Due in '. $years . ($years == 1 ? ' year' : ' years');
+                            }
+
+                        $html['main'] = $html['main'] . ' </b><a class="btn btn-'. ( $text == 'danger' ? $text : 'light') .'" href="./info/' . $row['id'] . '">
+                            Details
+                        </a>
+                        <a class="btn btn-transparent" href="./delete/task/' . $row['id'] . '">
+                            <i class="ti ti-trash"></i>
+                        </a>
+                    </div>
+                    </div>
+                </div>';
+                
+            }
+
+            if ($count == 0) {
+                $html['main'] = $html['main'] . '<h3 class="text-center mt-4">No tasks to show.</h3>';
+            }
+            
+            return $this->container->view->render($response, 'calendar.phtml', ['response' => $html]);
         
-        return $this->container->view->render($response, 'calendar.phtml', ['response' => $html]);
-        
+        } catch (Exception $e) {
+            return $response->withRedirect('../auth/signin?erro=' . Controller::ERROR_NOTSIGNIN);
+        }
     }
 
     public function renderCreateTask($request, $response) {
+        try {
         
-        $payload = ( new HomeExecuter($this->container) )->renderCalendar();
+            $payload = ( new HomeExecuter($this->container) )->renderSideBar();
+
+            if ($error = $request->getParam('erro')) {
+                switch ($error) {
+                    case Controller::ERROR_INSTASK:
+                        $toastParams = Controller::ERROR_INSTASK_PARAMS;
+                        break;
+                    case Controller::ERROR_DELCAT:
+                        $toastParams = Controller::ERROR_DELCAT_PARAMS;
+                        break;
+                    case Controller::SUCCESS_INSTASK:
+                        $toastParams = Controller::SUCCESS_INSTASK_PARAMS;
+                        break;
+                    case Controller::SUCCESS_DELCAT:
+                        $toastParams = Controller::SUCCESS_DELCAT_PARAMS;
+                        break;
+                    default:
+                        $toastParams = Controller::ERROR_UNDEFINED_PARAMS;
+
+                }
+
+                $html['toast'] = Controller::renderToast($toastParams);
+            } else {
+                $html['toast'] = '';
+            }
+            
+            $html['sidebar'] = HomeController::renderSideBar($payload, "../");
+            $html['categories'] = '';
+            $html['icon'] = '';
+
+            foreach ($payload['category'] as $row) {
+                $html['categories'] = $html['categories'] . '
+                <li>
+                <a role="button" id="item'. $row['id'] .'" class="dropdown-item">
+                    '. $row['name'] .'
+                </a>
+                </li>
+                
+                <script>
+                document.getElementById("item'. $row['id'] .'").addEventListener("click", 
+                    function() {
+                    document.getElementById("dropdownMenuButton1").innerHTML = "'. $row['name'] .'";
+                    document.getElementById("categoryValue").value = '. $row['id'] .';
+                    }
+                );
+                </script>';
+            }
+
+            foreach ($payload['icon'] as $row) {
+                $html['icon'] = $html['icon'] . '
+                <button id="icon'. $row['id'] .'" type="button" class="form-control col m-2 pt-2 pb-2 ps-3 pe-3">
+                    <i class="'. $row['class'] .'"></i>
+                </button>
+                
+                <script>
+                document.getElementById("icon'. $row['id'] .'").addEventListener("click", 
+                    function() {
+                    document.getElementById("icon'. $row['id'] .'").classList.add("bg-dark");
+                    document.getElementById("icon'. $row['id'] .'").classList.add("bg-opacity-10");
+                    
+                    actual = document.getElementById("iconValue").value
+                    document.getElementById("iconValue").value = '. $row['id'] .';
+
+                    document.getElementById("icon" + actual).classList.remove("bg-dark");
+                    document.getElementById("icon" + actual).classList.remove("bg-opacity-10");
+                    }
+                );
+                </script>';
+            }
+
+            return $this->container->view->render($response, 'create.phtml', ['response' => $html]);
         
-        $html['sidebar'] = HomeController::renderSideBar($payload, "../");
-        $html['categories'] = '';
-        $html['icon'] = '';
-
-        foreach ($payload['category'] as $row) {
-            $html['categories'] = $html['categories'] . '
-            <li>
-            <a role="button" id="item'. $row['id'] .'" class="dropdown-item">
-                '. $row['name'] .'
-            </a>
-            </li>
-            
-            <script>
-            document.getElementById("item'. $row['id'] .'").addEventListener("click", 
-                function() {
-                document.getElementById("dropdownMenuButton1").innerHTML = "'. $row['name'] .'";
-                document.getElementById("categoryValue").value = '. $row['id'] .';
-                }
-            );
-            </script>';
+        } catch (Exception $e) {
+            return $response->withRedirect('../../auth/signin?erro=' . Controller::ERROR_NOTSIGNIN);
         }
-
-        foreach ($payload['icon'] as $row) {
-            $html['icon'] = $html['icon'] . '
-            <button id="icon'. $row['id'] .'" type="button" class="form-control col m-2 pt-2 pb-2 ps-3 pe-3">
-                <i class="'. $row['class'] .'"></i>
-            </button>
-            
-            <script>
-              document.getElementById("icon'. $row['id'] .'").addEventListener("click", 
-                function() {
-                  document.getElementById("icon'. $row['id'] .'").classList.add("bg-dark");
-                  document.getElementById("icon'. $row['id'] .'").classList.add("bg-opacity-10");
-                  
-                  actual = document.getElementById("iconValue").value
-                  document.getElementById("iconValue").value = '. $row['id'] .';
-
-                  document.getElementById("icon" + actual).classList.remove("bg-dark");
-                  document.getElementById("icon" + actual).classList.remove("bg-opacity-10");
-                }
-              );
-            </script>';
-        }
-
-        return $this->container->view->render($response, 'create.phtml', ['response' => $html]);
     }
 
     public function renderCreateCategory($request, $response) {
 
-        $html['sidebar'] = HomeController::renderSideBar(
-            ( new HomeExecuter($this->container) )->renderSideBar(),
-            "../"
-        );
+        try {
+            if ($error = $request->getParam('erro')) {
+                switch ($error) {
+                    case Controller::ERROR_DELCAT:
+                        $toastParams = Controller::ERROR_DELCAT_PARAMS;
+                        break;
+                    case Controller::SUCCESS_DELCAT:
+                        $toastParams = Controller::ERROR_DELCAT_PARAMS;
+                        break;
+                    default:
+                        $toastParams = Controller::ERROR_UNDEFINED_PARAMS;
 
-        return $this->container->view->render($response, 'create-category.phtml', ['response' => $html]);
+                }
+
+                $html['toast'] = Controller::renderToast($toastParams);
+            } else {
+                $html['toast'] = '';
+            }
+            
+            $html['sidebar'] = HomeController::renderSideBar(
+                ( new HomeExecuter($this->container) )->renderSideBar(),
+                "../"
+            );
+
+            return $this->container->view->render($response, 'create-category.phtml', ['response' => $html]);
+    
+        } catch (Exception $e) {
+            return $response->withRedirect('../../auth/signin?erro=' . Controller::ERROR_NOTSIGNIN);
+        }
+
     }
 
     public function createTask($request, $response) {
         
-        if (( new HomeExecuter($this->container) )->createTask($request)) {
-            return $response->withRedirect('task');
+        try {
+            if (( new HomeExecuter($this->container) )->createTask($request)) {
+                return $response->withRedirect('task?erro=' . Controller::SUCCESS_INSTASK);
+            }
+        } catch (Exception $e) {
+            return $response->withRedirect('task?erro=' . Controller::ERROR_INSTASK);
         }
-
-        echo 'error';
-        return false;
+        
+        return $response->withRedirect('task?erro=' . Controller::ERROR_INSTASK);
+        
     }
 
     public function createCategory($request, $response) {
         
-        if (( new HomeExecuter($this->container) )->createCategory($request)) {
-            return $response->withRedirect('../calendar');
+        try {
+            if (( new HomeExecuter($this->container) )->createCategory($request)) {
+                return $response->withRedirect('../calendar?erro=' . Controller::SUCCESS_INSCAT);
+            }
+        } catch (Exception $e) {
+            return $response->withRedirect('task?erro=' . Controller::ERROR_INSCAT);
         }
 
-        echo 'error';
-        return false;
+        return $response->withRedirect('task?erro=' . Controller::ERROR_INSCAT);
     }
 
     public function renderInfo($request, $response, $args) {
         
-        $html['sidebar'] = HomeController::renderSideBar(
-            (new HomeExecuter($this->container))->renderSideBar(),
-            "../"
-        );
+        try {
+            if ($error = $request->getParam('erro')) {
+                switch ($error) {
+                    case Controller::ERROR_EDITTASK:
+                        $toastParams = Controller::ERROR_EDITTASK_PARAMS;
+                        break;
+                    case Controller::ERROR_DELCAT:
+                        $toastParams = Controller::ERROR_DELCAT_PARAMS;
+                        break;
+                    case Controller::SUCCESS_EDITTASK:
+                        $toastParams = Controller::SUCCESS_EDITTASK_PARAMS;
+                        break;
+                    case Controller::SUCCESS_DELCAT:
+                        $toastParams = Controller::SUCCESS_DELCAT_PARAMS;
+                        break;
+                    default:
+                        $toastParams = Controller::ERROR_UNDEFINED_PARAMS;
 
-        $payload = (new HomeExecuter($this->container))->renderInfo($args);
+                }
 
-        $html['main'] = '
-        <div class="card m-5 p-5">
-        <h1 class="display-1">' . $payload['task']['name'] . '</h1>
-        <h3 class="p-2 ps-0 text-danger">' . $payload['task']['deadline'] . '</h3>
-        <p class="w-100 lead mb-5">' . $payload['task']['desc'] . '</p>
+                $html['toast'] = Controller::renderToast($toastParams);
+            } else {
+                $html['toast'] = '';
+            }
 
-        <div class="d-flex mt-4">
-          <span class="badge rounded-pill text-bg-light p-3 position-relative">
-            ' . $payload['task']['name_category'] . '
-            <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-dark">
-              Category
+            $html['sidebar'] = HomeController::renderSideBar(
+                (new HomeExecuter($this->container))->renderSideBar(),
+                "../"
+            );
+
+            $payload = (new HomeExecuter($this->container))->renderInfo($args);
+
+            $html['main'] = '
+            <div class="card m-5 p-5">
+            <h1 class="display-1">' . $payload['task']['name'] . '</h1>
+            <h3 class="p-2 ps-0 text-danger">' . $payload['task']['deadline'] . '</h3>
+            <p class="w-100 lead mb-5">' . $payload['task']['desc'] . '</p>
+
+            <div class="d-flex mt-4">
+            <span class="badge rounded-pill text-bg-light p-3 position-relative">
+                ' . $payload['task']['name_category'] . '
+                <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-dark">
+                Category
+                </span>
             </span>
-          </span>
-          <span class="badge rounded-pill text-bg-light p-3 position-relative ms-5">
-            ' . $payload['task']['deadline'] . '
-            <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-dark">
-              Deadline
+            <span class="badge rounded-pill text-bg-light p-3 position-relative ms-5">
+                ' . $payload['task']['deadline'] . '
+                <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-dark">
+                Deadline
+                </span>
             </span>
-          </span>
-        </div>
+            </div>
+            
+            <div class="mt-5">
+            '. ( $payload['task']['done'] == 0 ? '<a type="button" class="btn btn-primary" href="../mark-as-done/' . $payload['task']['id'] . '">Mark as done</a>' : '' ) .'
+            <a type="button" class="btn btn-success ms-2" href="../edit/' . $payload['task']['id'] . '">Edit</a>
+            <a type="button" class="btn btn-danger ms-2" href="./../delete/task/' . $payload['task']['id'] . '">Delete</a>
+            <a type="button" class="btn btn-dark ms-2" href="./../../home">Close</a>
+            </div>';
+    
+            return $this->container->view->render($response, 'info.phtml', ['response' => $html]);
         
-        <div class="mt-5">
-          '. ( $payload['task']['done'] == 0 ? '<a type="button" class="btn btn-primary" href="../mark-as-done/' . $payload['task']['id'] . '">Mark as done</a>' : '' ) .'
-          <a type="button" class="btn btn-success ms-2" href="../edit/' . $payload['task']['id'] . '">Edit</a>
-          <a type="button" class="btn btn-danger ms-2" href="./../delete/task/' . $payload['task']['id'] . '">Delete</a>
-          <a type="button" class="btn btn-dark ms-2" href="./../../home">Close</a>
-        </div>';
- 
-        return $this->container->view->render($response, 'info.phtml', ['response' => $html]);
+        } catch (Exception $e) {
+            return $response->withRedirect('../../auth/signin?erro=' . Controller::ERROR_NOTSIGNIN);
+        }
     }
     
     public function renderEdit($request, $response, $args) {
         
-        $html['sidebar'] = HomeController::renderSideBar(
-            (new HomeExecuter($this->container))->renderSideBar(),
-            "../"
-        );
-        $html['main'] = '';
+        try {
+            if ($error = $request->getParam('erro')) {
+                switch ($error) {
+                    case Controller::ERROR_DELCAT:
+                        $toastParams = Controller::ERROR_DELCAT_PARAMS;
+                        break;
+                    case Controller::SUCCESS_DELCAT:
+                        $toastParams = Controller::ERROR_DELCAT_PARAMS;
+                        break;
+                    default:
+                        $toastParams = Controller::ERROR_UNDEFINED_PARAMS;
 
-        $payload = (new HomeExecuter($this->container))->renderEdit($args);
-
-        $html['main'] = $html['main'] . '
-        <form class="w-100 p-4" method="post" action="../edit/' . $payload['task']['id'] . '">
-            <div class="mb-4">
-              <label for="exampleInputEmail1" class="form-label">Title</label>
-              <input name="title" type="text" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp" value="' . $payload['task']['name'] . '">
-            </div>
-            <div class="mb-4">
-              <label for="exampleInputPassword1" class="form-label">Description</label>
-              <textarea rows="6" name="desc" class="form-control" id="exampleInputPassword1">' . $payload['task']['desc'] . '</textarea>
-            </div>
-            <div class="d-flex">
-              <div class="mb-4">
-                <label for="dropdownMenuButton" class="form-label">Category</label>
-                <div class="dropdown">
-                  <button class="form-control dropdown-toggle" type="button" id="dropdownMenuButton1" data-bs-toggle="dropdown" aria-expanded="false">
-                    ' . $payload['task']['name_category'] . '
-                  </button>
-                  <input type="hidden" name="category" value="' . $payload['task']['category'] . '" id="categoryValue">
-                  <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">';
-    
-        foreach ($payload['category'] as $row) {
-            $html['main'] = $html['main'] . '
-            <li>
-            <a role="button" id="item'. $row['id'] .'" class="dropdown-item">
-                '. $row['name'] .'
-            </a>
-            </li>
-            
-            <script>
-            document.getElementById("item'. $row['id'] .'").addEventListener("click", 
-                function() {
-                document.getElementById("dropdownMenuButton1").innerHTML = "'. $row['name'] .'";
-                document.getElementById("categoryValue").value = '. $row['id'] .';
                 }
+
+                $html['toast'] = Controller::renderToast($toastParams);
+            } else {
+                $html['toast'] = '';
+            }
+
+            $html['sidebar'] = HomeController::renderSideBar(
+                (new HomeExecuter($this->container))->renderSideBar(),
+                "../"
             );
-            </script>';
-        }
-                      
-        $html['main'] = $html['main'] . '
-                </ul>
-            </div>
-        </div>
-            <div class="mb-4 ms-4">
-                <label for="exampleInputEmail1" name="deadline" class="form-label">Deadline</label>
-                <input type="date" name="until" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp" value="' . $payload['task']['deadline'] . '" required>
+            $html['main'] = '';
+
+            $payload = (new HomeExecuter($this->container))->renderEdit($args);
+
+            $html['main'] = $html['main'] . '
+            <form class="w-100 p-4" method="post" action="../edit/' . $payload['task']['id'] . '">
+                <div class="mb-4">
+                <label for="exampleInputEmail1" class="form-label">Title</label>
+                <input name="title" type="text" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp" value="' . $payload['task']['name'] . '">
+                </div>
+                <div class="mb-4">
+                <label for="exampleInputPassword1" class="form-label">Description</label>
+                <textarea rows="6" name="desc" class="form-control" id="exampleInputPassword1">' . $payload['task']['desc'] . '</textarea>
+                </div>
+                <div class="d-flex">
+                <div class="mb-4">
+                    <label for="dropdownMenuButton" class="form-label">Category</label>
+                    <div class="dropdown">
+                    <button class="form-control dropdown-toggle" type="button" id="dropdownMenuButton1" data-bs-toggle="dropdown" aria-expanded="false">
+                        ' . $payload['task']['name_category'] . '
+                    </button>
+                    <input type="hidden" name="category" value="' . $payload['task']['category'] . '" id="categoryValue">
+                    <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">';
+        
+            foreach ($payload['category'] as $row) {
+                $html['main'] = $html['main'] . '
+                <li>
+                <a role="button" id="item'. $row['id'] .'" class="dropdown-item">
+                    '. $row['name'] .'
+                </a>
+                </li>
+                
+                <script>
+                document.getElementById("item'. $row['id'] .'").addEventListener("click", 
+                    function() {
+                    document.getElementById("dropdownMenuButton1").innerHTML = "'. $row['name'] .'";
+                    document.getElementById("categoryValue").value = '. $row['id'] .';
+                    }
+                );
+                </script>';
+            }
+                        
+            $html['main'] = $html['main'] . '
+                    </ul>
                 </div>
             </div>
-            <div class="d-flex">
-                <div class="mb-4">
-                <label for="dropdownMenuButton" class="form-label">Icon</label>
-                <input type="hidden" name="icon" value="' . $payload['task']['icon'] . '" id="iconValue">
-                    <div class="row w-75">';
+                <div class="mb-4 ms-4">
+                    <label for="exampleInputEmail1" name="deadline" class="form-label">Deadline</label>
+                    <input type="date" name="until" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp" value="' . $payload['task']['deadline'] . '" required>
+                    </div>
+                </div>
+                <div class="d-flex">
+                    <div class="mb-4">
+                    <label for="dropdownMenuButton" class="form-label">Icon</label>
+                    <input type="hidden" name="icon" value="' . $payload['task']['icon'] . '" id="iconValue">
+                        <div class="row w-75">';
 
-        foreach ($payload['icon'] as $row) {
-            $html['main'] = $html['main'] .  '
-            <button id="icon'. $row['id'] .'" type="button" class="form-control col m-2 pt-2 pb-2 ps-3 pe-3">
-                <i class="'. $row['class'] .'"></i>
-            </button>
-            
-            <script>
-            document.getElementById("icon'. $row['id'] .'").addEventListener("click", 
-                function() {
-                document.getElementById("icon'. $row['id'] .'").classList.add("bg-dark");
-                document.getElementById("icon'. $row['id'] .'").classList.add("bg-opacity-10");
-                
-                actual = document.getElementById("iconValue").value
-                document.getElementById("iconValue").value = '. $row['id'] .';
-
-                document.getElementById("icon" + actual).classList.remove("bg-dark");
-                document.getElementById("icon" + actual).classList.remove("bg-opacity-10");
-                }
-            );\
-            </script>';
-
-            if ($payload['task']['icon'] == $row['id']) {
+            foreach ($payload['icon'] as $row) {
                 $html['main'] = $html['main'] .  '
+                <button id="icon'. $row['id'] .'" type="button" class="form-control col m-2 pt-2 pb-2 ps-3 pe-3">
+                    <i class="'. $row['class'] .'"></i>
+                </button>
+                
                 <script>
-                    document.getElementById("icon'. $row['id'] .'").classList.add("bg-dark");
-                    document.getElementById("icon'. $row['id'] .'").classList.add("bg-opacity-10");
-                </script> ';
+                document.getElementById("icon'. $row['id'] .'").addEventListener("click", 
+                    function() {
+                        document.getElementById("icon'. $row['id'] .'").classList.add("bg-dark");
+                        document.getElementById("icon'. $row['id'] .'").classList.add("bg-opacity-10");
+                        
+                        actual = document.getElementById("iconValue").value
+                        document.getElementById("iconValue").value = '. $row['id'] .';
+
+                        document.getElementById("icon" + actual).classList.remove("bg-dark");
+                        document.getElementById("icon" + actual).classList.remove("bg-opacity-10");
+                    }
+                );
+                </script>';
+
+                if ($payload['task']['icon'] == $row['id']) {
+                    $html['main'] = $html['main'] .  '
+                    <script>
+                        document.getElementById("icon'. $row['id'] .'").classList.add("bg-dark");
+                        document.getElementById("icon'. $row['id'] .'").classList.add("bg-opacity-10");
+                    </script> ';
+                }
             }
+
+            $html['main'] = $html['main'] . '
+                </div>
+                </div>
+                </div>
+                <button type="submit" class="btn btn-success">Edit</button>
+                <a type="button" class="btn btn-danger ms-2" href="./../../home">Close</a>
+            </form>';
+
+            return $this->container->view->render($response, 'edit.phtml', ['response' => $html]);
+
+        } catch (Exception $e) {
+            return $response->withRedirect('../../auth/signin?erro=' . Controller::ERROR_NOTSIGNIN);
         }
-
-        $html['main'] = $html['main'] . '
-               </div>
-              </div>
-            </div>
-            <button type="submit" class="btn btn-success">Edit</button>
-            <a type="button" class="btn btn-danger ms-2" href="./../home">Close</a>
-        </form>';
-
-        return $this->container->view->render($response, 'edit.phtml', ['response' => $html]);
     }
 
     public function edit($request, $response, $args) {
 
-        if (( new HomeExecuter($this->container) )->edit($request, $args)) {
-            return $response->withRedirect('info/' . $args['id']);
+        try {
+            if (( new HomeExecuter($this->container) )->edit($request, $args)) {
+                return $response->withRedirect('../info/' . $args['id'] . "?erro=" . Controller::SUCCESS_EDITTASK);
+            }
+        } catch (Exception $e) {
+            return $response->withRedirect('../info/' . $args['id'] . "?erro=" . Controller::ERROR_EDITTASK);
         }
 
-        echo 'error';
-        return false;
+        return $response->withRedirect('../info/' . $args['id'] . "?erro=" . Controller::ERROR_EDITTASK);
         
     }
 
     public function renderProfile($request, $response) {
 
-        $payload = ( new HomeExecuter($this->container) )->renderSideBar();
-        $html['sidebar'] = HomeController::renderSideBar(
-            $payload,
-            "./"
-        );
+        try {
+            if ($error = $request->getParam('erro')) {
+                switch ($error) {
+                    case Controller::ERROR_DELCAT:
+                        $toastParams = Controller::ERROR_DELCAT_PARAMS;
+                        break;
+                    case Controller::SUCCESS_DELCAT:
+                        $toastParams = Controller::SUCCESS_DELCAT_PARAMS;
+                        break;
+                    default:
+                        $toastParams = Controller::ERROR_UNDEFINED_PARAMS;
 
-        $html['main'] = '';
+                }
 
-        $html['main'] = $html['main'] . '
-        <div class="row align-items-center mb-5">
-            <div class="col-lg-4 order-lg-1 order-2">
-            <div class="d-flex align-items-center justify-content-around m-4">
-                <div class="text-center">
-                <i class="ti ti-check fs-6 d-block mb-2"></i>
-                <h4 class="mb-0 lh-1">' . $payload['user']['tasks'] . '</h4>
-                <p class="mb-0 ">Tasks</p>
+                $html['toast'] = Controller::renderToast($toastParams);
+            } else {
+                $html['toast'] = '';
+            }
+
+            $payload = ( new HomeExecuter($this->container) )->renderSideBar();
+            $html['sidebar'] = HomeController::renderSideBar(
+                $payload,
+                "./"
+            );
+
+            $html['main'] = '';
+
+            $html['main'] = $html['main'] . '
+            <div class="row align-items-center mb-5">
+                <div class="col-lg-4 order-lg-1 order-2">
+                <div class="d-flex align-items-center justify-content-around m-4">
+                    <div class="text-center">
+                    <i class="ti ti-check fs-6 d-block mb-2"></i>
+                    <h4 class="mb-0 lh-1">' . $payload['user']['tasks'] . '</h4>
+                    <p class="mb-0 ">Tasks</p>
+                    </div>
+                    <div class="text-center">
+                    <i class="ti ti-bookmark fs-6 d-block mb-2"></i>
+                    <h4 class="mb-0 lh-1">' . $payload['user']['categories'] . '</h4>
+                    <p class="mb-0 ">Categories</p>
+                    </div>
                 </div>
-                <div class="text-center">
-                <i class="ti ti-bookmark fs-6 d-block mb-2"></i>
-                <h4 class="mb-0 lh-1">' . $payload['user']['categories'] . '</h4>
-                <p class="mb-0 ">Categories</p>
                 </div>
-            </div>
-            </div>
-            <div class="col-lg-4 mt-n3 order-lg-2 order-1">
-            <div class="mt-n5">
-                <div class="d-flex align-items-center justify-content-center mb-2">
-                <div class="d-flex align-items-center justify-content-center round-110">
-                    <img draggable="false" src="../../../../../resources/views/assets/images/profile/' . $payload['user']['icon'] . '" alt="modernize-img" class="w-50 h-50 rounded-circle overflow-hidden border border-4 border-white">
+                <div class="col-lg-4 mt-n3 order-lg-2 order-1">
+                <div class="mt-n5">
+                    <div class="d-flex align-items-center justify-content-center mb-2">
+                    <div class="d-flex align-items-center justify-content-center round-110">
+                        <img draggable="false" src="../../../../../resources/views/assets/images/profile/' . $payload['user']['icon'] . '" alt="modernize-img" class="w-50 h-50 rounded-circle overflow-hidden border border-4 border-white">
+                    </div>
+                    </div>
+                    <div class="text-center">
+                    <h5 class="mb-0">' . $payload['user']['name'] . '</h5>
+                    </div>
                 </div>
                 </div>
-                <div class="text-center">
-                <h5 class="mb-0">' . $payload['user']['name'] . '</h5>
+                <div class="col-lg-4 order-last text-center">
+                <ul class="list-unstyled d-flex align-items-center justify-content-center my-3 mx-4 pe-xxl-4 gap-3">
+                    <li class="text-center">
+                        <i class="ti ti-mail"></i>
+                        <h4 class="mb-2 lh-1">' . $payload['user']['email'] . '</h4>
+                        <p class="mb-0 ">Email</p>
+                    </li>
+                </ul>
                 </div>
-            </div>
-            </div>
-            <div class="col-lg-4 order-last text-center">
-            <ul class="list-unstyled d-flex align-items-center justify-content-center my-3 mx-4 pe-xxl-4 gap-3">
-                <li class="text-center">
-                    <i class="ti ti-mail"></i>
-                    <h4 class="mb-2 lh-1">' . $payload['user']['email'] . '</h4>
-                    <p class="mb-0 ">Email</p>
-                </li>
-            </ul>
-            </div>
-        </div>';
+            </div>';
+            
+            return $this->container->view->render($response, 'profile.phtml', ['response' => $html]);
         
-        return $this->container->view->render($response, 'profile.phtml', ['response' => $html]);
+        } catch (Exception $e) {
+            return $response->withRedirect('../auth/signin?erro=' . Controller::ERROR_NOTSIGNIN);
+        }
     }
 
     public function deleteTask($request, $response, $args) {
         
-        if (( new HomeExecuter($this->container) )->deleteTask($args)) {
-            return $response->withRedirect('../../calendar');
+        try {
+            if (( new HomeExecuter($this->container) )->deleteTask($args) == 1) {
+                return $response->withRedirect('../../calendar?erro=' . Controller::SUCCESS_DELTASK);
+            }
+        } catch (Exception $e) {
+            return $response->withRedirect('../../calendar?erro=' . Controller::ERROR_DELTASK);
         }
-        
-        echo 'error';
-        return false;
+
+        return $response->withRedirect('../../calendar?erro=' . Controller::ERROR_DELTASK);
     }
 
     public function deleteCategory($request, $response, $args) {
+
+        $url = $request->getParam('url');
         
-        if (( new HomeExecuter($this->container) )->deleteCategory($args) == 1) {
-            return $response->withRedirect('../../calendar');
+        try {
+            if (( new HomeExecuter($this->container) )->deleteCategory($args) == 1) {
+                return $response->withRedirect( '../../' . $url . '?erro=' . Controller::SUCCESS_DELCAT);
+            }
+        } catch (Exception $e) {
+            return $response->withRedirect( '../../' . $url . '?erro=' . Controller::ERROR_DELCAT);
         }
-        
-        echo 'error';
-        return false;
     }
 
     public function markDone($request, $response, $args) {
         
-        if (( new HomeExecuter($this->container) )->markDone($args) == 1) {
-            return $response->withRedirect('../calendar');
+        try {
+            if (( new HomeExecuter($this->container) )->markDone($args) == 1) {
+                return $response->withRedirect('../calendar?erro=' . Controller::SUCCESS_MARKDONE);
+            }
+        } catch (Exception $e) {
+            return $response->withRedirect('../calendar?erro=' . Controller::ERROR_MARKDONE);
         }
         
-        echo 'error';
-        return false;
+        return $response->withRedirect('../calendar?erro=' . Controller::ERROR_MARKDONE);
     }
+
 }

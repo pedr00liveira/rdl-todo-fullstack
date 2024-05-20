@@ -15,6 +15,10 @@ class AuthExecuter extends Executer {
         $pass = $request->getParam('password');
         $icon = $request->getParam('user_icon');
 
+        $name = str_replace("'", "\\'", $name);
+        $email = str_replace("'", "\\'", $email);
+        $pass = str_replace("'", "\\'", $pass);
+
         $sql = "SELECT * 
                 FROM user
                 WHERE email = '$email'";
@@ -38,8 +42,11 @@ class AuthExecuter extends Executer {
             if ($result->execute()) {
                 return true;
             }
+
+        } else {
+            return false;
         }
-        echo 'error';
+        
         return false;
     }
 
@@ -47,6 +54,9 @@ class AuthExecuter extends Executer {
         
         $email = $request->getParam('email');
         $pass = $request->getParam('password');
+
+        $email = str_replace("'", "\\'", $email);
+        $pass = str_replace("'", "\\'", $pass);
 
         $sql = "SELECT id_user 
                 FROM user
@@ -63,7 +73,7 @@ class AuthExecuter extends Executer {
             }
         }
 
-        return "error";
+        return false;
     }
     
 }
