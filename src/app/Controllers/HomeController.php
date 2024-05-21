@@ -838,6 +838,8 @@ class HomeController extends Controller {
         } catch (Exception $e) {
             return $response->withRedirect( '../../' . $url . '?erro=' . Controller::ERROR_DELCAT);
         }
+
+        return $response->withRedirect( '../../' . $url . '?erro=' . Controller::ERROR_DELCAT);
     }
 
     public function markDone($request, $response, $args) {
